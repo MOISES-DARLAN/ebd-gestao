@@ -8,7 +8,7 @@ import json
 
 @login_required
 def attendance_history(request, turma_id):
-    if turma_id not in request.session.get('turmas_autorizadas', []):
+    if not request.user.is_staff and turma_id not in request.session.get('turmas_autorizadas', []):
         messages.warning(request, 'Acesso negado.')
         return redirect('ebd:acesso_turma', turma_id=turma_id)
 
@@ -25,7 +25,7 @@ def attendance_history(request, turma_id):
 def chamada_detalhes(request, chamada_id):
     chamada = get_object_or_404(Chamada, id=chamada_id)
 
-    if chamada.turma.id not in request.session.get('turmas_autorizadas', []):
+    if not request.user.is_staff and chamada.turma.id not in request.session.get('turmas_autorizadas', []):
         messages.warning(request, 'Acesso negado.')
         return redirect('ebd:dashboard')
 
@@ -36,7 +36,7 @@ def chamada_detalhes(request, chamada_id):
 
 @login_required
 def analise_turma(request, turma_id):
-    if turma_id not in request.session.get('turmas_autorizadas', []):
+    if not request.user.is_staff and turma_id not in request.session.get('turmas_autorizadas', []):
         messages.warning(request, 'Acesso negado.')
         return redirect('ebd:acesso_turma', turma_id=turma_id)
     

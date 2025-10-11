@@ -17,7 +17,13 @@
     <div class="card">
         <div class="page-header">
             <h1>Histórico de Chamadas <span style="font-weight: 300; color: #777;">| {{ turma.nome }}</span></h1>
-            <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
+            
+            {% comment %} Lógica condicional para o botão Voltar {% endcomment %}
+            {% if request.user.is_staff %}
+                <a href="{% url 'core:admin_dashboard' %}" class="btn btn-secondary">Voltar ao Painel Admin</a>
+            {% else %}
+                <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel da Turma</a>
+            {% endif %}
         </div>
         {% for chamada in historico %}
             <div class="chamada-item">

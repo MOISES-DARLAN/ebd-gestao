@@ -11,6 +11,11 @@ def home_page(request):
 
 @login_required
 def dashboard(request):
+    # Se o usuário for admin/staff, redireciona para o painel de admin
+    if request.user.is_staff:
+        return redirect('core:admin_dashboard')
+    
+    # Se não, continua com o fluxo normal de professor
     turmas = Turma.objects.all().order_by('nome')
     context = {'turmas': turmas}
     return render(request, 'ebd/dashboard.html', context)
