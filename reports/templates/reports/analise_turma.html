@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Análise Visual - {{ turma.nome }}{% endblock %}
+{% block content %}
+<header class="header">
+    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
+    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
+</header>
+<main class="container">
+    <div class="card">
+        <div class="page-header">
+            <h1>Análise Visual <span style="font-weight: 300; color: #777;">| {{ turma.nome }}</span></h1>
+            <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
+        </div>
+
+        <div style="margin-bottom: 3rem;">
+            <h2>Ranking de Alunos (Top 10 do Semestre)</h2>
+            <canvas id="rankingChart"></canvas>
+        </div>
+
+        <div>
+            <h2>Frequência da Turma (Alunos Presentes por Aula)</h2>
+            <canvas id="frequenciaChart"></canvas>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rankingCtx = document.getElementById('rankingChart').getContext('2d');
+        new Chart(rankingCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ ranking_labels|safe }},
+                datasets: [{
+                    label: 'Pontos Totais',
+                    data: {{ ranking_data|safe }},
+                    backgroundColor: 'rgba(74, 124, 89, 0.8)',
+                    borderColor: 'rgba(58, 99, 71, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const frequenciaCtx = document.getElementById('frequenciaChart').getContext('2d');
+        new Chart(frequenciaCtx, {
+            type: 'line',
+            data: {
+                labels: {{ frequencia_labels|safe }},
+                datasets: [{
+                    label: 'Alunos Presentes',
+                    data: {{ frequencia_data|safe }},
+                    fill: true,
+                    backgroundColor: 'rgba(74, 124, 89, 0.2)',
+                    borderColor: 'rgba(74, 124, 89, 1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                           stepSize: 1 
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

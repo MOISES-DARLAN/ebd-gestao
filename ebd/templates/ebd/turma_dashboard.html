@@ -6,14 +6,20 @@
     .action-card { background-color: var(--background-light); text-align: center; padding: 2rem; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--border-color); }
     .action-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
     .action-card h2 { margin-top: 0; font-size: 1.25rem; text-transform: none; }
-    .action-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .action-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; min-height: 50px; }
+    .action-card a { text-decoration: none; display: inline-block; padding: 0.7rem 2rem; border-radius: 0; font-weight: bold; color: white; }
+    .chamada-btn { background: #28a745; }
+    .historico-btn { background: #17a2b8; }
+    .alunos-btn { background: #ffc107; color: #333; }
+    .analise-btn { background: #6f42c1; } /* Nova cor para o botão de análise */
 </style>
 {% endblock %}
 {% block content %}
 <header class="header">
     <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
-    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
+    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0; display:inline;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
 </header>
+
 <main class="container">
     <div class="page-header">
         <h1>Painel da Turma: {{ turma.nome }}</h1>
@@ -21,18 +27,23 @@
     <div class="action-grid">
         <div class="action-card">
             <h2>Chamada</h2>
-            <p>Realizar a chamada do dia, registrar ofertas e outros dados.</p>
-            <a href="{% url 'ebd:chamada' turma.id %}" class="btn btn-primary">Fazer Chamada</a>
+            <p>Realizar a chamada do dia, registrar ofertas, visitantes e Bíblias.</p>
+            <a href="{% url 'ebd:chamada' turma.id %}" class="btn chamada-btn">Fazer Chamada</a>
         </div>
         <div class="action-card">
             <h2>Histórico</h2>
-            <p>Visualizar relatórios de presença e dados consolidados da turma.</p>
-            <a href="{% url 'reports:history' turma.id %}" class="btn btn-info">Ver Histórico</a>
+            <p>Consultar a lista de chamadas e os detalhes de cada aula.</p>
+            <a href="{% url 'reports:history' turma.id %}" class="btn historico-btn">Ver Histórico</a>
         </div>
         <div class="action-card">
             <h2>Alunos</h2>
             <p>Adicionar, editar ou remover alunos cadastrados nesta turma.</p>
-            <a href="{% url 'ebd:gerenciar_alunos' turma.id %}" class="btn btn-warning">Gerenciar Alunos</a>
+            <a href="{% url 'ebd:gerenciar_alunos' turma.id %}" class="btn alunos-btn">Gerenciar Alunos</a>
+        </div>
+        <div class="action-card">
+            <h2>Análise Visual</h2>
+            <p>Ver gráficos de desempenho da turma, como ranking e frequência.</p>
+            <a href="{% url 'reports:analise' turma.id %}" class="btn analise-btn">Ver Gráficos</a>
         </div>
     </div>
 </main>
