@@ -1,23 +1,24 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from ebd.models import Turma, Chamada
+from ebd.models import Turma, Chamada, RegistroAlunoChamada
+from django.db.models import Count, Q
 
 @login_required
 def attendance_history(request, turma_id):
     if turma_id not in request.session.get('turmas_autorizadas', []):
-        messages.warning(request, 'Acesso negado. Por favor, insira o código da turma.')
+        messages.warning(request, 'Acesso negado.')
         return redirect('ebd:acesso_turma', turma_id=turma_id)
 
     turma = get_object_or_404(Turma, id=turma_id)
-    historico = Chamada.objects.filter(turma=turma).order_by('-data')
     
-    context = {
-        'turma': turma,
-        'historico': historico,
-    }
+    # A lógica de contagem foi movida para cá usando .annotate()
+    historico = Chamada.objects.filter(turma=turma).order_by('-data').annotate(
+        presentes_count=Count('registroalunochamada', filter=Q(registroalunochamada__presente=True))
+    )
+    
+    context = { 'turma': turma, 'historico': historico }
     return render(request, 'reports/attendance_history.html', context)
-
 
 @login_required
 def chamada_detalhes(request, chamada_id):
@@ -27,13 +28,7 @@ def chamada_detalhes(request, chamada_id):
         messages.warning(request, 'Acesso negado.')
         return redirect('ebd:dashboard')
 
-    alunos_da_turma = chamada.turma.alunos.all().order_by('nome_completo')
+    registros = RegistroAlunoChamada.objects.filter(chamada=chamada).select_related('aluno').order_by('aluno__nome_completo')
     
-    context = {
-        'chamada': chamada,
-        'alunos_da_turma': alunos_da_turma,
-        'ids_presentes': chamada.alunos_presentes.values_list('id', flat=True),
-        'ids_com_biblia': chamada.alunos_com_biblia.values_list('id', flat=True),
-        'ids_com_licao': chamada.alunos_com_licao.values_list('id', flat=True),
-    }
+    context = { 'chamada': chamada, 'registros': registros }
     return render(request, 'reports/chamada_detalhes.html', context)

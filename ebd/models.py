@@ -22,15 +22,47 @@ class Turma(models.Model):
 class Chamada(models.Model):
     turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
     data = models.DateField()
-    alunos_presentes = models.ManyToManyField(Aluno, related_name='presencas', blank=True)
-    alunos_com_biblia = models.ManyToManyField(Aluno, related_name='biblias', blank=True)
-    alunos_com_licao = models.ManyToManyField(Aluno, related_name='licoes', blank=True)
     oferta_do_dia = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    visitantes = models.PositiveIntegerField(default=0)
+    visitantes = models.PositiveIntegerField(default=0) # Este é o total de visitantes da turma
     observacoes = models.TextField(blank=True, null=True)
-
+    
     class Meta:
         unique_together = ('turma', 'data')
 
     def __str__(self):
         return f"Chamada da turma '{self.turma.nome}' em {self.data.strftime('%d/%m/%Y')}"
+
+class RegistroAlunoChamada(models.Model):
+    class Participacao(models.TextChoices):
+        NADA = 'NADA', 'Nada'
+        MEDIANO = 'MEDIANO', 'Mediano'
+        MUITO = 'MUITO', 'Muito'
+
+    chamada = models.ForeignKey(Chamada, on_delete=models.CASCADE)
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    
+    presente = models.BooleanField(default=False)
+    trouxe_biblia = models.BooleanField(default=False)
+    trouxe_revista = models.BooleanField(default=False)
+    contribuiu = models.BooleanField(default=False)
+    levou_visitante = models.BooleanField(default=False)
+    participacao = models.CharField(
+        max_length=10,
+        choices=Participacao.choices,
+        default=Participacao.NADA
+    )
+
+    class Meta:
+        unique_together = ('chamada', 'aluno')
+
+    @property
+    def pontos(self):
+        total = 0
+        if self.presente: total += 15
+        if self.contribuiu: total += 10
+        if self.participacao == self.Participacao.MUITO: total += 10
+        elif self.participacao == self.Participacao.MEDIANO: total += 5
+        if self.trouxe_biblia: total += 5
+        if self.trouxe_revista: total += 5
+        if self.levou_visitante: total += 20
+        return total

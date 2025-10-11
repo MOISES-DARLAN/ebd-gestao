@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Turma, Chamada, Aluno
+from .models import Turma, Chamada, Aluno, RegistroAlunoChamada
 from .forms import AlunoForm
 from datetime import date
-
+from django.db.models import Sum, Case, When, IntegerField
 
 def home_page(request):
     return render(request, 'ebd/home.html')
@@ -35,7 +35,6 @@ def acesso_turma(request, turma_id):
     context = {'turma': turma}
     return render(request, 'ebd/acesso_turma.html', context)
 
-
 @login_required
 def turma_dashboard(request, turma_id):
     if turma_id not in request.session.get('turmas_autorizadas', []):
@@ -52,30 +51,72 @@ def chamada(request, turma_id):
 
     turma = get_object_or_404(Turma, id=turma_id)
     hoje = date.today()
-    obj_chamada, created = Chamada.objects.get_or_create(turma=turma, data=hoje)
+    obj_chamada, _ = Chamada.objects.get_or_create(turma=turma, data=hoje)
 
     if request.method == 'POST':
         obj_chamada.oferta_do_dia = request.POST.get('oferta_do_dia', 0)
         obj_chamada.visitantes = request.POST.get('visitantes', 0)
         obj_chamada.save()
         
-        obj_chamada.alunos_presentes.set(request.POST.getlist('presentes'))
-        obj_chamada.alunos_com_biblia.set(request.POST.getlist('com_biblia'))
-        obj_chamada.alunos_com_licao.set(request.POST.getlist('com_licao'))
+        for aluno in turma.alunos.all():
+            presente = f'presente_{aluno.id}' in request.POST
+            biblia = f'biblia_{aluno.id}' in request.POST
+            revista = f'revista_{aluno.id}' in request.POST
+            contribuiu = f'contribuiu_{aluno.id}' in request.POST
+            visitante = f'visitante_{aluno.id}' in request.POST
+            participacao = request.POST.get(f'participacao_{aluno.id}', 'NADA')
+
+            RegistroAlunoChamada.objects.update_or_create(
+                chamada=obj_chamada,
+                aluno=aluno,
+                defaults={
+                    'presente': presente,
+                    'trouxe_biblia': biblia,
+                    'trouxe_revista': revista,
+                    'contribuiu': contribuiu,
+                    'levou_visitante': visitante,
+                    'participacao': participacao,
+                }
+            )
         
         messages.success(request, 'Chamada salva com sucesso!')
         return redirect('ebd:chamada', turma_id=turma.id)
 
+    alunos_data = []
+    semestre_inicio = date(hoje.year, 1, 1) if hoje.month < 7 else date(hoje.year, 7, 1)
+
+    for aluno in turma.alunos.all().order_by('nome_completo'):
+        registro, _ = RegistroAlunoChamada.objects.get_or_create(chamada=obj_chamada, aluno=aluno)
+        
+        pontuacao_semestre = RegistroAlunoChamada.objects.filter(
+            aluno=aluno, chamada__data__gte=semestre_inicio
+        ).aggregate(
+            total_pontos=Sum(Case(When(presente=True, then=15), default=0, output_field=IntegerField())) +
+                Sum(Case(When(contribuiu=True, then=10), default=0, output_field=IntegerField())) +
+                Sum(Case(
+                    When(participacao='MUITO', then=10),
+                    When(participacao='MEDIANO', then=5),
+                    default=0,
+                    output_field=IntegerField()
+                )) +
+                Sum(Case(When(trouxe_biblia=True, then=5), default=0, output_field=IntegerField())) +
+                Sum(Case(When(trouxe_revista=True, then=5), default=0, output_field=IntegerField())) +
+                Sum(Case(When(levou_visitante=True, then=20), default=0, output_field=IntegerField()))
+        )['total_pontos'] or 0
+
+        alunos_data.append({
+            'aluno': aluno,
+            'registro': registro,
+            'pontuacao_semestre': pontuacao_semestre
+        })
+
     context = {
         'turma': turma,
-        'alunos': turma.alunos.all().order_by('nome_completo'),
         'chamada_de_hoje': obj_chamada,
-        'ids_presentes_hoje': obj_chamada.alunos_presentes.values_list('id', flat=True),
-        'ids_com_biblia_hoje': obj_chamada.alunos_com_biblia.values_list('id', flat=True),
-        'ids_com_licao_hoje': obj_chamada.alunos_com_licao.values_list('id', flat=True),
+        'alunos_data': alunos_data,
+        'opcoes_participacao': RegistroAlunoChamada.Participacao.choices,
     }
     return render(request, 'ebd/chamada.html', context)
-
 
 @login_required
 def gerenciar_alunos(request, turma_id):
@@ -119,7 +160,7 @@ def aluno_update(request, turma_id, aluno_id):
         if form.is_valid():
             form.save()
             messages.success(request, f"Dados do aluno '{aluno.nome_completo}' atualizados com sucesso!")
-            return redirect('ebd:gerenciar_alunos', turma_id=turma_id) 
+            return redirect('ebd:gerenciar_alunos', turma_id=turma_id)
     else:
         form = AlunoForm(instance=aluno)
         
@@ -139,7 +180,7 @@ def aluno_delete(request, turma_id, aluno_id):
         turma.alunos.remove(aluno)
         aluno.delete()
         messages.success(request, f"Aluno '{nome_aluno}' excluído com sucesso.")
-        return redirect('ebd:gerenciar_alunos', turma_id=turma_id) 
+        return redirect('ebd:gerenciar_alunos', turma_id=turma_id)
         
     context = {'aluno': aluno, 'turma': turma}
     return render(request, 'ebd/aluno_confirm_delete.html', context)

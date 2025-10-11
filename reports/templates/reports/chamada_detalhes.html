@@ -6,8 +6,6 @@
     .summary-item { text-align: center; }
     .summary-item h2 { font-size: 1rem; color: var(--text-muted); margin: 0 0 0.5rem 0; font-weight: normal; text-transform: none; }
     .summary-item p { font-size: 1.5rem; font-weight: bold; margin: 0; }
-    .status-presente { color: #155724; font-weight: bold; }
-    .status-ausente { color: #721c24; }
     .check-icon { color: #28a745; font-size: 1.2rem; }
     .cross-icon { color: #dc3545; font-size: 1.2rem; }
 </style>
@@ -25,20 +23,35 @@
         </div>
         <div class="summary-grid">
             <div class="summary-item"><h2>Oferta do Dia</h2><p>R$ {{ chamada.oferta_do_dia }}</p></div>
-            <div class="summary-item"><h2>Visitantes</h2><p>{{ chamada.visitantes }}</p></div>
+            <div class="summary-item"><h2>Visitantes da Turma</h2><p>{{ chamada.visitantes }}</p></div>
         </div>
         <table class="custom-table">
-            <thead><tr><th>Aluno</th><th>Status</th><th>Bíblia</th><th>Lição</th></tr></thead>
-            <tbody>
-                {% for aluno in alunos_da_turma %}
+            <thead>
                 <tr>
-                    <td>{{ aluno.nome_completo }}</td>
-                    <td>{% if aluno.id in ids_presentes %}<span class="status-presente">Presente</span>{% else %}<span class="status-ausente">Ausente</span>{% endif %}</td>
-                    <td>{% if aluno.id in ids_com_biblia %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
-                    <td>{% if aluno.id in ids_com_licao %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <th>Aluno</th>
+                    <th>Pontos do Dia</th>
+                    <th>Presente</th>
+                    <th>Bíblia</th>
+                    <th>Revista</th>
+                    <th>Contribuiu</th>
+                    <th>Visitante</th>
+                    <th>Participação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in registros %}
+                <tr>
+                    <td>{{ registro.aluno.nome_completo }}</td>
+                    <td><strong>{{ registro.pontos }}</strong></td>
+                    <td>{% if registro.presente %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if registro.trouxe_biblia %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if registro.trouxe_revista %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if registro.contribuiu %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if registro.levou_visitante %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{{ registro.get_participacao_display }}</td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="4">Nenhum aluno cadastrado nesta turma.</td></tr>
+                <tr><td colspan="8">Nenhum aluno nesta chamada.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

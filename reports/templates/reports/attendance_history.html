@@ -26,7 +26,7 @@
                     <a href="{% url 'reports:details' chamada.id %}" class="btn btn-info">Detalhes</a>
                 </div>
                 <div class="chamada-summary">
-                    Presentes: {{ chamada.alunos_presentes.count }} | Visitantes: {{ chamada.visitantes }} | Oferta: R$ {{ chamada.oferta_do_dia }}
+                    Presentes: {{ chamada.presentes_count }} | Visitantes: {{ chamada.visitantes }} | Oferta: R$ {{ chamada.oferta_do_dia }}
                 </div>
             </div>
         {% empty %}

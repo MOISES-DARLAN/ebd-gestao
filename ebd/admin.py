@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Aluno, Turma, Chamada
+from .models import Aluno, Turma, Chamada, RegistroAlunoChamada
 
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
@@ -13,8 +13,20 @@ class TurmaAdmin(admin.ModelAdmin):
     search_fields = ('nome',)
     filter_horizontal = ('alunos',)
 
+class RegistroAlunoChamadaInline(admin.TabularInline):
+    model = RegistroAlunoChamada
+    extra = 1
+    autocomplete_fields = ['aluno']
+
 @admin.register(Chamada)
 class ChamadaAdmin(admin.ModelAdmin):
-    list_display = ('turma', 'data')
+    list_display = ('turma', 'data', 'oferta_do_dia', 'visitantes')
     list_filter = ('turma', 'data')
-    filter_horizontal = ('alunos_presentes',)
+    inlines = [RegistroAlunoChamadaInline]
+    search_fields = ('turma__nome', 'data') # Linha adicionada
+
+@admin.register(RegistroAlunoChamada)
+class RegistroAlunoChamadaAdmin(admin.ModelAdmin):
+    list_display = ('aluno', 'chamada', 'presente', 'pontos')
+    list_filter = ('aluno', 'chamada__data', 'presente')
+    autocomplete_fields = ['aluno', 'chamada']

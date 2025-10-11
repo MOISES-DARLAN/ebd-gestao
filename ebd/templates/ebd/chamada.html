@@ -1,5 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}Chamada - {{ turma.nome }}{% endblock %}
+{% block style %}
+<style>
+.pontos {
+    color: var(--dark-green);
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-left: 8px;
+}
+.chamada-table select {
+    padding: 0.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+}
+</style>
+{% endblock %}
 {% block content %}
 <header class="header">
     <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
@@ -18,18 +33,40 @@
                 <div class="form-group" style="flex: 1;"><label for="oferta">Oferta do Dia (R$)</label><input type="number" step="0.01" name="oferta_do_dia" id="oferta" value="{{ chamada_de_hoje.oferta_do_dia|default:0 }}"></div>
                 <div class="form-group" style="flex: 1;"><label for="visitantes">Nº de Visitantes</label><input type="number" name="visitantes" id="visitantes" value="{{ chamada_de_hoje.visitantes|default:0 }}"></div>
             </div>
-            <table class="custom-table">
-                <thead><tr><th>Aluno</th><th>Presente</th><th>Bíblia</th><th>Lição</th></tr></thead>
-                <tbody>
-                    {% for aluno in alunos %}
+            <table class="custom-table chamada-table">
+                <thead>
                     <tr>
-                        <td>{{ aluno.nome_completo }}</td>
-                        <td><input type="checkbox" name="presentes" value="{{ aluno.id }}" {% if aluno.id in ids_presentes_hoje %}checked{% endif %}></td>
-                        <td><input type="checkbox" name="com_biblia" value="{{ aluno.id }}" {% if aluno.id in ids_com_biblia_hoje %}checked{% endif %}></td>
-                        <td><input type="checkbox" name="com_licao" value="{{ aluno.id }}" {% if aluno.id in ids_com_licao_hoje %}checked{% endif %}></td>
+                        <th>Aluno</th>
+                        <th>Presente (15)</th>
+                        <th>Bíblia (5)</th>
+                        <th>Revista (5)</th>
+                        <th>Contrib. (10)</th>
+                        <th>Visitante (20)</th>
+                        <th>Participação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in alunos_data %}
+                    <tr>
+                        <td>
+                            {{ data.aluno.nome_completo }}
+                            <span class="pontos">({{ data.pontuacao_semestre }} Pts)</span>
+                        </td>
+                        <td><input type="checkbox" name="presente_{{ data.aluno.id }}" {% if data.registro.presente %}checked{% endif %}></td>
+                        <td><input type="checkbox" name="biblia_{{ data.aluno.id }}" {% if data.registro.trouxe_biblia %}checked{% endif %}></td>
+                        <td><input type="checkbox" name="revista_{{ data.aluno.id }}" {% if data.registro.trouxe_revista %}checked{% endif %}></td>
+                        <td><input type="checkbox" name="contribuiu_{{ data.aluno.id }}" {% if data.registro.contribuiu %}checked{% endif %}></td>
+                        <td><input type="checkbox" name="visitante_{{ data.aluno.id }}" {% if data.registro.levou_visitante %}checked{% endif %}></td>
+                        <td>
+                            <select name="participacao_{{ data.aluno.id }}">
+                                {% for value, label in opcoes_participacao %}
+                                <option value="{{ value }}" {% if data.registro.participacao == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="4">Nenhum aluno cadastrado. Adicione alunos na tela de "Gerenciar Alunos".</td></tr>
+                    <tr><td colspan="7">Nenhum aluno cadastrado. Adicione alunos na tela de "Gerenciar Alunos".</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
