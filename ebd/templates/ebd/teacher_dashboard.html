@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel do Professor</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f9f9f9; color: #333; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1rem; }
+        .header-actions a { text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; margin-left: 0.5rem; }
+        .logout { background: #dc3545; color: white; }
+        .history-link { background: #6c757d; color: white; }
+        .success-msg { background-color: #d4edda; color: #155724; padding: 1rem; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 1rem; }
+        .student-list { list-style: none; padding: 0; }
+        .student-list li { display: flex; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #eee; }
+        .student-list input { margin-right: 1rem; width: 20px; height: 20px; }
+        .submit-btn { display: block; width: 100%; margin-top: 1.5rem; padding: 0.8rem; font-size: 1rem; border: none; background-color: #28a745; color: white; border-radius: 4px; cursor: pointer; }
+        .submit-btn:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Turma: {{ turma.nome }}</h1>
+            <div class="header-actions">
+                <a href="{% url 'attendance_history' %}" class="history-link">Ver Histórico</a>
+                <a href="{% url 'logout' %}" class="logout">Sair</a>
+            </div>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="success-msg">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <h2>Chamada do Dia: {{ "now"|date:"d/m/Y" }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            <ul class="student-list">
+                {% for aluno in alunos %}
+                    <li>
+                        <input type="checkbox" name="presentes" value="{{ aluno.id }}" id="aluno_{{ aluno.id }}"
+                            {% if aluno.id in ids_presentes_hoje %}checked{% endif %}>
+                        <label for="aluno_{{ aluno.id }}">{{ aluno.nome_completo }}</label>
+                    </li>
+                {% empty %}
+                    <li>Nenhum aluno cadastrado nesta turma.</li>
+                {% endfor %}
+            </ul>
+            <button type="submit" class="submit-btn">Salvar Chamada</button>
+        </form>
+    </div>
+</body>
+</html>
