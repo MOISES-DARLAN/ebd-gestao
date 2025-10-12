@@ -4,6 +4,9 @@ from django.contrib import messages
 from .models import Turma, Chamada, Aluno
 from datetime import date
 
+def home_page(request):
+    return render(request, 'ebd/home.html')
+
 @login_required
 def teacher_dashboard(request):
     try:

@@ -1,56 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Turma, Chamada, Aluno
-from datetime import date
+from django.urls import path
+from django.contrib.auth import views as auth_views
+from . import views
 
-@login_required
-def teacher_dashboard(request):
-    try:
-        turma = Turma.objects.get(professor=request.user)
-    except Turma.DoesNotExist:
-        return render(request, 'ebd/no_turma.html')
-
-    hoje = date.today()
-    
-    if request.method == 'POST':
-        ids_alunos_presentes = request.POST.getlist('presentes')
-        chamada, created = Chamada.objects.get_or_create(turma=turma, data=hoje)
-        
-        chamada.alunos_presentes.clear()
-        
-        for aluno_id in ids_alunos_presentes:
-            aluno = Aluno.objects.get(id=aluno_id)
-            chamada.alunos_presentes.add(aluno)
-        
-        messages.success(request, 'Chamada salva com sucesso!')
-        return redirect('teacher_dashboard')
-
-    alunos_da_turma = turma.alunos.all().order_by('nome_completo')
-    chamada_de_hoje = Chamada.objects.filter(turma=turma, data=hoje).first()
-    ids_presentes_hoje = []
-    if chamada_de_hoje:
-        ids_presentes_hoje = chamada_de_hoje.alunos_presentes.values_list('id', flat=True)
-
-    context = {
-        'turma': turma,
-        'alunos': alunos_da_turma,
-        'ids_presentes_hoje': ids_presentes_hoje
-    }
-    return render(request, 'ebd/teacher_dashboard.html', context)
-
-
-@login_required
-def attendance_history(request):
-    try:
-        turma = Turma.objects.get(professor=request.user)
-    except Turma.DoesNotExist:
-        return render(request, 'ebd/no_turma.html')
-    
-    historico = Chamada.objects.filter(turma=turma).order_by('-data').prefetch_related('alunos_presentes')
-    
-    context = {
-        'turma': turma,
-        'historico': historico,
-    }
-    return render(request, 'ebd/attendance_history.html', context)
+urlpatterns = [
+    path('login/', auth_views.LoginView.as_view(template_name='ebd/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('dashboard/', views.teacher_dashboard, name='teacher_dashboard'),
+    path('historico/', views.attendance_history, name='attendance_history'),
+    path('', views.home_page, name='home'),
+]
