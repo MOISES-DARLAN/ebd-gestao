@@ -23,7 +23,7 @@
         <div class="header">
             <h1>Histórico da Turma: {{ turma.nome }}</h1>
             <div class="header-actions">
-                <a href="{% url 'ebd:dashboard' %}" class="back-link">Voltar</a>
+                <a href="{% url 'ebd:chamada' turma.id %}" class="back-link">Voltar para Chamada</a>
                 <a href="{% url 'ebd:logout' %}" class="logout">Sair</a>
             </div>
         </div>

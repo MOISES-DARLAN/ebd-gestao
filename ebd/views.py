@@ -119,4 +119,10 @@ def aluno_delete(request, turma_id, aluno_id):
     
     if request.method == 'POST':
         nome_aluno = aluno.nome_completo
-        turma.alunos
+        turma.alunos.remove(aluno)
+        aluno.delete()
+        messages.success(request, f"Aluno '{nome_aluno}' excluído com sucesso.")
+        return redirect('ebd:chamada', turma_id=turma_id)
+        
+    context = {'aluno': aluno, 'turma': turma}
+    return render(request, 'ebd/aluno_confirm_delete.html', context)
