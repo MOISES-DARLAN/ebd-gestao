@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Painel do Professor</title>
+    <title>Chamada - {{ turma.nome }}</title>
     <style>
         body { font-family: sans-serif; background-color: #f9f9f9; color: #333; }
         .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -10,6 +10,7 @@
         .header-actions a { text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; margin-left: 0.5rem; }
         .logout { background: #dc3545; color: white; }
         .history-link { background: #6c757d; color: white; }
+        .dashboard-link { background: #007bff; color: white; }
         .success-msg { background-color: #d4edda; color: #155724; padding: 1rem; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 1rem; }
         .student-list { list-style: none; padding: 0; }
         .student-list li { display: flex; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #eee; }
@@ -23,7 +24,8 @@
         <div class="header">
             <h1>Turma: {{ turma.nome }}</h1>
             <div class="header-actions">
-                <a href="{% url 'reports:history' %}" class="history-link">Ver Histórico</a>
+                <a href="{% url 'dashboard' %}" class="dashboard-link">Turmas</a>
+                <a href="{% url 'reports:history' turma.id %}" class="history-link">Ver Histórico</a>
                 <a href="{% url 'logout' %}" class="logout">Sair</a>
             </div>
         </div>

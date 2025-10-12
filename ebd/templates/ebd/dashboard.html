@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Professor</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; }
+        .header { background-color: white; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; font-size: 1.5rem; color: #333; }
+        .logout { text-decoration: none; background: #dc3545; color: white; padding: 0.5rem 1rem; border-radius: 4px; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .turma-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .turma-card { background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .turma-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+        .turma-card-header { background-color: #007bff; color: white; padding: 1.5rem; text-align: center; }
+        .turma-card-header h2 { margin: 0; font-size: 1.25rem; }
+        .turma-card-body { padding: 1.5rem; text-align: center; }
+        .turma-card-body p { margin: 0 0 1.5rem 0; color: #6c757d; }
+        .acessar-btn { display: inline-block; text-decoration: none; background-color: #28a745; color: white; padding: 0.7rem 1.5rem; border-radius: 50px; font-weight: bold; transition: background-color 0.2s; }
+        .acessar-btn:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Selecione uma Turma</h1>
+        <a href="{% url 'logout' %}" class="logout">Sair</a>
+    </div>
+    <div class="container">
+        <div class="turma-grid">
+            {% for turma in turmas %}
+                <div class="turma-card">
+                    <div class="turma-card-header">
+                        <h2>{{ turma.nome }}</h2>
+                    </div>
+                    <div class="turma-card-body">
+                        <p>Clique abaixo para acessar a área de chamada da turma.</p>
+                        <a href="{% url 'acesso_turma' turma.id %}" class="acessar-btn">Acessar Turma</a>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Nenhuma turma cadastrada no sistema.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

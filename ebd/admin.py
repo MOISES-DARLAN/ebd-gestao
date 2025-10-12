@@ -9,7 +9,7 @@ class AlunoAdmin(admin.ModelAdmin):
 
 @admin.register(Turma)
 class TurmaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'professor')
+    list_display = ('nome', 'codigo_acesso')
     search_fields = ('nome',)
     filter_horizontal = ('alunos',)
 

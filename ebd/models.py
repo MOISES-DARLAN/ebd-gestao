@@ -13,7 +13,7 @@ class Aluno(models.Model):
 
 class Turma(models.Model):
     nome = models.CharField(max_length=100)
-    professor = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
+    codigo_acesso = models.CharField(max_length=50, help_text="Senha para o professor acessar a turma.")
     alunos = models.ManyToManyField(Aluno, blank=True)
 
     def __str__(self):
