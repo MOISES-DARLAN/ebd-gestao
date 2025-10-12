@@ -8,7 +8,7 @@
         body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; }
         .header { background-color: white; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
         .header h1 { margin: 0; font-size: 1.5rem; color: #333; }
-        .logout { text-decoration: none; background: #dc3545; color: white; padding: 0.5rem 1rem; border-radius: 4px; }
+        .logout-form button { background: #dc3545; color: white; padding: 0.5rem 1rem; border-radius: 4px; border: none; font-family: inherit; font-size: 1rem; cursor: pointer; }
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
         .turma-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
         .turma-card { background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
@@ -24,7 +24,10 @@
 <body>
     <div class="header">
         <h1>Selecione uma Turma</h1>
-        <a href="{% url 'ebd:logout' %}" class="logout">Sair</a>
+        <form class="logout-form" action="{% url 'ebd:logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Sair</button>
+        </form>
     </div>
     <div class="container">
         <div class="turma-grid">

@@ -5,6 +5,8 @@ from .models import Turma, Chamada, Aluno
 from .forms import AlunoForm
 from datetime import date
 
+# ... (as funções home_page, dashboard, acesso_turma permanecem iguais) ...
+
 def home_page(request):
     return render(request, 'ebd/home.html')
 
@@ -34,7 +36,6 @@ def acesso_turma(request, turma_id):
     context = {'turma': turma}
     return render(request, 'ebd/acesso_turma.html', context)
 
-
 @login_required
 def chamada(request, turma_id):
     if turma_id not in request.session.get('turmas_autorizadas', []):
@@ -43,32 +44,39 @@ def chamada(request, turma_id):
 
     turma = get_object_or_404(Turma, id=turma_id)
     hoje = date.today()
+    obj_chamada, created = Chamada.objects.get_or_create(turma=turma, data=hoje)
 
     if request.method == 'POST':
-        ids_alunos_presentes = request.POST.getlist('presentes')
-        obj_chamada, created = Chamada.objects.get_or_create(turma=turma, data=hoje)
+        # Salva os dados gerais da chamada
+        obj_chamada.oferta_do_dia = request.POST.get('oferta_do_dia', 0)
+        obj_chamada.visitantes = request.POST.get('visitantes', 0)
+        obj_chamada.save()
+
+        # Salva os dados por aluno
+        ids_presentes = request.POST.getlist('presentes')
+        ids_com_biblia = request.POST.getlist('com_biblia')
+        ids_com_licao = request.POST.getlist('com_licao')
         
-        obj_chamada.alunos_presentes.clear()
-        
-        for aluno_id in ids_alunos_presentes:
-            aluno = Aluno.objects.get(id=aluno_id)
-            obj_chamada.alunos_presentes.add(aluno)
+        obj_chamada.alunos_presentes.set(ids_presentes)
+        obj_chamada.alunos_com_biblia.set(ids_com_biblia)
+        obj_chamada.alunos_com_licao.set(ids_com_licao)
         
         messages.success(request, 'Chamada salva com sucesso!')
         return redirect('ebd:chamada', turma_id=turma.id)
 
     alunos_da_turma = turma.alunos.all().order_by('nome_completo')
-    chamada_de_hoje = Chamada.objects.filter(turma=turma, data=hoje).first()
-    ids_presentes_hoje = []
-    if chamada_de_hoje:
-        ids_presentes_hoje = chamada_de_hoje.alunos_presentes.values_list('id', flat=True)
-
+    
     context = {
         'turma': turma,
         'alunos': alunos_da_turma,
-        'ids_presentes_hoje': ids_presentes_hoje
+        'chamada_de_hoje': obj_chamada,
+        'ids_presentes_hoje': obj_chamada.alunos_presentes.values_list('id', flat=True),
+        'ids_com_biblia_hoje': obj_chamada.alunos_com_biblia.values_list('id', flat=True),
+        'ids_com_licao_hoje': obj_chamada.alunos_com_licao.values_list('id', flat=True),
     }
     return render(request, 'ebd/chamada.html', context)
+
+# ... (as funções de CRUD de aluno permanecem iguais) ...
 
 @login_required
 def aluno_create(request, turma_id):

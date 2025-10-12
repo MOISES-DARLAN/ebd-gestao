@@ -22,7 +22,11 @@ class Turma(models.Model):
 class Chamada(models.Model):
     turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
     data = models.DateField()
-    alunos_presentes = models.ManyToManyField(Aluno, blank=True)
+    alunos_presentes = models.ManyToManyField(Aluno, related_name='presencas', blank=True)
+    alunos_com_biblia = models.ManyToManyField(Aluno, related_name='biblias', blank=True)
+    alunos_com_licao = models.ManyToManyField(Aluno, related_name='licoes', blank=True)
+    oferta_do_dia = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    visitantes = models.PositiveIntegerField(default=0)
     observacoes = models.TextField(blank=True, null=True)
 
     class Meta:
