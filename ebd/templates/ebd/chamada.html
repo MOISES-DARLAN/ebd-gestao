@@ -7,16 +7,21 @@
         body { font-family: sans-serif; background-color: #f9f9f9; color: #333; }
         .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1rem; }
-        .header-actions a { text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; margin-left: 0.5rem; }
+        .header-actions a { text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; margin-left: 0.5rem; font-size: 0.9rem; }
         .logout { background: #dc3545; color: white; }
         .history-link { background: #6c757d; color: white; }
         .dashboard-link { background: #007bff; color: white; }
         .success-msg { background-color: #d4edda; color: #155724; padding: 1rem; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 1rem; }
         .student-list { list-style: none; padding: 0; }
-        .student-list li { display: flex; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #eee; }
+        .student-list-item { display: flex; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #eee; }
+        .student-list-item:last-child { border-bottom: none; }
+        .student-name { flex-grow: 1; }
+        .student-actions a { text-decoration: none; font-size: 0.8rem; padding: 0.3rem 0.6rem; border-radius: 4px; margin-left: 0.5rem; }
+        .edit-btn { background: #ffc107; color: #333; }
+        .delete-btn { background: #dc3545; color: white; }
         .student-list input { margin-right: 1rem; width: 20px; height: 20px; }
         .submit-btn { display: block; width: 100%; margin-top: 1.5rem; padding: 0.8rem; font-size: 1rem; border: none; background-color: #28a745; color: white; border-radius: 4px; cursor: pointer; }
-        .submit-btn:hover { background-color: #218838; }
+        .add-student-btn { display: inline-block; text-decoration: none; background: #007bff; color: white; padding: 0.6rem 1.2rem; border-radius: 5px; margin-bottom: 1.5rem; }
     </style>
 </head>
 <body>
@@ -24,9 +29,9 @@
         <div class="header">
             <h1>Turma: {{ turma.nome }}</h1>
             <div class="header-actions">
-                <a href="{% url 'dashboard' %}" class="dashboard-link">Turmas</a>
-                <a href="{% url 'reports:history' turma.id %}" class="history-link">Ver Histórico</a>
-                <a href="{% url 'logout' %}" class="logout">Sair</a>
+                <a href="{% url 'ebd:dashboard' %}" class="dashboard-link">Turmas</a>
+                <a href="{% url 'reports:history' turma.id %}" class="history-link">Histórico</a>
+                <a href="{% url 'ebd:logout' %}" class="logout">Sair</a>
             </div>
         </div>
         
@@ -37,14 +42,20 @@
         {% endif %}
 
         <h2>Chamada do Dia: {{ "now"|date:"d/m/Y" }}</h2>
+        <a href="{% url 'ebd:aluno_create' turma.id %}" class="add-student-btn">Adicionar Novo Aluno</a>
+
         <form method="post">
             {% csrf_token %}
             <ul class="student-list">
                 {% for aluno in alunos %}
-                    <li>
+                    <li class="student-list-item">
                         <input type="checkbox" name="presentes" value="{{ aluno.id }}" id="aluno_{{ aluno.id }}"
                             {% if aluno.id in ids_presentes_hoje %}checked{% endif %}>
-                        <label for="aluno_{{ aluno.id }}">{{ aluno.nome_completo }}</label>
+                        <label for="aluno_{{ aluno.id }}" class="student-name">{{ aluno.nome_completo }}</label>
+                        <div class="student-actions">
+                            <a href="{% url 'ebd:aluno_update' turma.id aluno.id %}" class="edit-btn">Editar</a>
+                            <a href="{% url 'ebd:aluno_delete' turma.id aluno.id %}" class="delete-btn">Excluir</a>
+                        </div>
                     </li>
                 {% empty %}
                     <li>Nenhum aluno cadastrado nesta turma.</li>

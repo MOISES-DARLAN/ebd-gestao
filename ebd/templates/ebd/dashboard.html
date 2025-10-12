@@ -24,7 +24,7 @@
 <body>
     <div class="header">
         <h1>Selecione uma Turma</h1>
-        <a href="{% url 'logout' %}" class="logout">Sair</a>
+        <a href="{% url 'ebd:logout' %}" class="logout">Sair</a>
     </div>
     <div class="container">
         <div class="turma-grid">
@@ -35,7 +35,7 @@
                     </div>
                     <div class="turma-card-body">
                         <p>Clique abaixo para acessar a área de chamada da turma.</p>
-                        <a href="{% url 'acesso_turma' turma.id %}" class="acessar-btn">Acessar Turma</a>
+                        <a href="{% url 'ebd:acesso_turma' turma.id %}" class="acessar-btn">Acessar Turma</a>
                     </div>
                 </div>
             {% empty %}
