@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes da Chamada</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f9f9f9; color: #333; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .header h1 { font-size: 1.5rem; }
+        .back-link { text-decoration: none; background: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 4px; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .report-section h2 { font-size: 1.2rem; color: #495057; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+        .student-list { list-style: none; padding: 0; }
+        .student-list li { padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; }
+        .presentes li { background-color: #d4edda; color: #155724; }
+        .ausentes li { background-color: #f8d7da; color: #721c24; }
+        @media (max-width: 600px) {
+            .report-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Relatório do Dia: {{ chamada.data|date:"d/m/Y" }}</h1>
+            <a href="{% url 'reports:history' %}" class="back-link">Voltar para Histórico</a>
+        </div>
+        
+        <div class="report-grid">
+            <div class="report-section presentes">
+                <h2>Presentes ({{ alunos_presentes.count }})</h2>
+                <ul class="student-list">
+                    {% for aluno in alunos_presentes %}
+                        <li>{{ aluno.nome_completo }}</li>
+                    {% empty %}
+                        <li>Nenhum aluno esteve presente.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="report-section ausentes">
+                <h2>Ausentes ({{ alunos_ausentes|length }})</h2>
+                <ul class="student-list">
+                    {% for aluno in alunos_ausentes %}
+                        <li>{{ aluno.nome_completo }}</li>
+                    {% empty %}
+                        <li>Todos os alunos estiveram presentes.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

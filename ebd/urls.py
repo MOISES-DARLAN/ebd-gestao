@@ -6,6 +6,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='ebd/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.teacher_dashboard, name='teacher_dashboard'),
-    path('historico/', views.attendance_history, name='attendance_history'),
     path('', views.home_page, name='home'),
 ]

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico de Chamadas</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f9f9f9; color: #333; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .header-actions a { text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; margin-left: 0.5rem; }
+        .back-link { background: #007bff; color: white; }
+        .logout { background: #dc3545; color: white; }
+        .chamada-list { list-style: none; padding: 0; }
+        .chamada-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 0.8rem; }
+        .chamada-date { font-weight: bold; font-size: 1.1rem; }
+        .details-btn { text-decoration: none; background: #17a2b8; color: white; padding: 0.5rem 1.2rem; border-radius: 4px; transition: background-color 0.2s; }
+        .details-btn:hover { background: #138496; }
+        .no-history { color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Histórico da Turma: {{ turma.nome }}</h1>
+            <div class="header-actions">
+                <a href="{% url 'teacher_dashboard' %}" class="back-link">Voltar</a>
+                <a href="{% url 'logout' %}" class="logout">Sair</a>
+            </div>
+        </div>
+        
+        <ul class="chamada-list">
+            {% for chamada in historico %}
+                <li class="chamada-item">
+                    <span class="chamada-date">Chamada do dia: {{ chamada.data|date:"d/m/Y" }}</span>
+                    <a href="{% url 'reports:details' chamada.id %}" class="details-btn">Detalhes</a>
+                </li>
+            {% empty %}
+                <p class="no-history">Nenhum registro de chamada encontrado para esta turma.</p>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

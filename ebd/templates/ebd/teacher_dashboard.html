@@ -23,7 +23,7 @@
         <div class="header">
             <h1>Turma: {{ turma.nome }}</h1>
             <div class="header-actions">
-                <a href="{% url 'attendance_history' %}" class="history-link">Ver Histórico</a>
+                <a href="{% url 'reports:history' %}" class="history-link">Ver Histórico</a>
                 <a href="{% url 'logout' %}" class="logout">Sair</a>
             </div>
         </div>

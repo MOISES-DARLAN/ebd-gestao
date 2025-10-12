@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Turma, Chamada, Aluno
@@ -41,19 +41,3 @@ def teacher_dashboard(request):
         'ids_presentes_hoje': ids_presentes_hoje
     }
     return render(request, 'ebd/teacher_dashboard.html', context)
-
-
-@login_required
-def attendance_history(request):
-    try:
-        turma = Turma.objects.get(professor=request.user)
-    except Turma.DoesNotExist:
-        return render(request, 'ebd/no_turma.html')
-    
-    historico = Chamada.objects.filter(turma=turma).order_by('-data').prefetch_related('alunos_presentes')
-    
-    context = {
-        'turma': turma,
-        'historico': historico,
-    }
-    return render(request, 'ebd/attendance_history.html', context)
