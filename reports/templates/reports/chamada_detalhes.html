@@ -24,7 +24,7 @@
     <div class="container">
         <div class="header">
             <h1>Relatório do Dia: {{ chamada.data|date:"d/m/Y" }}</h1>
-            <a href="{% url 'reports:history' %}" class="back-link">Voltar para Histórico</a>
+            <a href="{% url 'reports:history' chamada.turma.id %}" class="back-link">Voltar para Histórico</a>
         </div>
         
         <div class="report-grid">
