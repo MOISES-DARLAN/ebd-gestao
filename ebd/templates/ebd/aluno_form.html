@@ -22,10 +22,12 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <div class="form-actions">
-                <button type="submit" class="btn btn-submit">Salvar</button>
-                <a href="{% url 'ebd:chamada' turma.id %}" class="btn btn-cancel">Cancelar</a>
-            </div>
+            ...
+<div class="form-actions">
+    <button type="submit" class="btn btn-submit">Salvar</button>
+    <a href="{% url 'ebd:gerenciar_alunos' turma.id %}" class="btn btn-cancel">Cancelar</a>
+</div>
+...
         </form>
     </div>
 </body>

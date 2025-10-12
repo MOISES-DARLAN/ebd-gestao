@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard da Turma: {{ turma.nome }}</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; color: #333; }
+        .header { background-color: white; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; font-size: 1.5rem; }
+        .header-nav a, .header-nav button { text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; margin-left: 0.5rem; font-size: 0.9rem; font-family: inherit; border: none; cursor: pointer; }
+        .back-link { background: #6c757d; color: white; }
+        .logout-btn { background: #dc3545; color: white; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 2rem; }
+        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .action-card { background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.07); text-align: center; padding: 2rem; transition: transform 0.2s, box-shadow 0.2s; }
+        .action-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .action-card h2 { margin-top: 0; font-size: 1.25rem; }
+        .action-card p { color: #6c757d; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .action-card a { text-decoration: none; display: inline-block; padding: 0.7rem 2rem; border-radius: 50px; font-weight: bold; color: white; }
+        .chamada-btn { background: #28a745; }
+        .historico-btn { background: #17a2b8; }
+        .alunos-btn { background: #ffc107; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Turma: {{ turma.nome }}</h1>
+        <nav class="header-nav">
+            <a href="{% url 'ebd:dashboard' %}" class="back-link">Voltar para Turmas</a>
+            <form action="{% url 'ebd:logout' %}" method="post" style="margin:0; display:inline;"><button type="submit" class="logout-btn">Sair</button>{% csrf_token %}</form>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="action-grid">
+            <div class="action-card">
+                <h2>Chamada</h2>
+                <p>Realizar a chamada do dia, registrar ofertas, visitantes e Bíblias.</p>
+                <a href="{% url 'ebd:chamada' turma.id %}" class="chamada-btn">Fazer Chamada</a>
+            </div>
+            <div class="action-card">
+                <h2>Histórico</h2>
+                <p>Visualizar relatórios de presença, ofertas e outros dados da turma.</p>
+                <a href="{% url 'reports:history' turma.id %}" class="historico-btn">Ver Histórico</a>
+            </div>
+            <div class="action-card">
+                <h2>Alunos</h2>
+                <p>Adicionar, editar ou remover alunos cadastrados nesta turma.</p>
+                <a href="{% url 'ebd:gerenciar_alunos' turma.id %}" class="alunos-btn">Gerenciar Alunos</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

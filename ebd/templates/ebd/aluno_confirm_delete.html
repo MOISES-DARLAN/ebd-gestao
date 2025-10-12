@@ -17,11 +17,11 @@
         <h1>Atenção!</h1>
         <p>Você tem certeza que deseja excluir permanentemente o aluno <strong>{{ aluno.nome_completo }}</strong>?</p>
         <p>Esta ação não pode ser desfeita.</p>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-delete">Sim, Excluir</button>
-            <a href="{% url 'ebd:chamada' turma.id %}" class="btn btn-cancel">Cancelar</a>
-        </form>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-delete">Sim, Excluir</button>
+    <a href="{% url 'ebd:gerenciar_alunos' turma.id %}" class="btn btn-cancel">Cancelar</a>
+</form>
     </div>
 </body>
 </html>

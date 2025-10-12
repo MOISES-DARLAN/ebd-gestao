@@ -7,13 +7,9 @@
         body { font-family: sans-serif; background-color: #f9f9f9; color: #333; }
         .container { max-width: 900px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1rem; }
-        .header-actions { display: flex; align-items: center; }
-        .header-actions a, .header-actions button { text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; margin-left: 0.5rem; font-size: 0.9rem; font-family: inherit; }
-        .logout { background: #dc3545; color: white; border: none; cursor: pointer; }
-        .history-link { background: #6c757d; color: white; }
-        .dashboard-link { background: #007bff; color: white; }
+        .header-actions a { text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.9rem; }
+        .back-link { background: #007bff; color: white; }
         .success-msg { background-color: #d4edda; color: #155724; padding: 1rem; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 1rem; }
-        .add-student-btn { display: inline-block; text-decoration: none; background: #007bff; color: white; padding: 0.6rem 1.2rem; border-radius: 5px; margin-bottom: 1.5rem; }
         .info-geral { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
         .info-geral .form-group { flex: 1; }
         .info-geral label { font-weight: bold; display: block; margin-bottom: 0.5rem; }
@@ -21,29 +17,18 @@
         .chamada-table { width: 100%; border-collapse: collapse; }
         .chamada-table th, .chamada-table td { text-align: left; padding: 0.8rem; border-bottom: 1px solid #eee; }
         .chamada-table th { font-size: 0.9rem; color: #6c757d; }
-        .chamada-table td.actions { text-align: right; }
         .chamada-table input[type="checkbox"] { width: 20px; height: 20px; }
-        .actions a { text-decoration: none; font-size: 0.8rem; padding: 0.3rem 0.6rem; border-radius: 4px; margin-left: 0.5rem; }
-        .edit-btn { background: #ffc107; color: #333; }
-        .delete-btn { background: #dc3545; color: white; }
         .submit-btn { display: block; width: 100%; margin-top: 1.5rem; padding: 0.8rem; font-size: 1rem; border: none; background-color: #28a745; color: white; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Turma: {{ turma.nome }}</h1>
-            <div class="header-actions">
-                <a href="{% url 'ebd:dashboard' %}" class="dashboard-link">Turmas</a>
-                <a href="{% url 'reports:history' turma.id %}" class="history-link">Histórico</a>
-                <form action="{% url 'ebd:logout' %}" method="post" style="margin: 0;"><button type="submit" class="logout">Sair</button>{% csrf_token %}</form>
-            </div>
+            <h1>Chamada do Dia: {{ "now"|date:"d/m/Y" }}</h1>
+            <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="back-link">Voltar ao Painel da Turma</a>
         </div>
         
         {% if messages %}{% for message in messages %}<div class="success-msg">{{ message }}</div>{% endfor %}{% endif %}
-
-        <h2>Chamada do Dia: {{ "now"|date:"d/m/Y" }}</h2>
-        <a href="{% url 'ebd:aluno_create' turma.id %}" class="add-student-btn">Adicionar Novo Aluno</a>
 
         <form method="post">
             {% csrf_token %}
@@ -59,15 +44,7 @@
             </div>
 
             <table class="chamada-table">
-                <thead>
-                    <tr>
-                        <th>Aluno</th>
-                        <th>Presente</th>
-                        <th>Bíblia</th>
-                        <th>Lição</th>
-                        <th style="text-align: right;">Ações</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Aluno</th><th>Presente</th><th>Bíblia</th><th>Lição</th></tr></thead>
                 <tbody>
                     {% for aluno in alunos %}
                     <tr>
@@ -75,13 +52,9 @@
                         <td><input type="checkbox" name="presentes" value="{{ aluno.id }}" {% if aluno.id in ids_presentes_hoje %}checked{% endif %}></td>
                         <td><input type="checkbox" name="com_biblia" value="{{ aluno.id }}" {% if aluno.id in ids_com_biblia_hoje %}checked{% endif %}></td>
                         <td><input type="checkbox" name="com_licao" value="{{ aluno.id }}" {% if aluno.id in ids_com_licao_hoje %}checked{% endif %}></td>
-                        <td class="actions">
-                            <a href="{% url 'ebd:aluno_update' turma.id aluno.id %}" class="edit-btn">Editar</a>
-                            <a href="{% url 'ebd:aluno_delete' turma.id aluno.id %}" class="delete-btn">Excluir</a>
-                        </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="5">Nenhum aluno cadastrado nesta turma.</td></tr>
+                    <tr><td colspan="4">Nenhum aluno cadastrado nesta turma.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
