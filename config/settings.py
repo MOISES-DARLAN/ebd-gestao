@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-2-34cy_zls1iu-@mc3a+bxzk&%-l44kvt)411t=cv=(&3s=t@j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["https://ebd-gestao.onrender.com"]
+ALLOWED_HOSTS = ["ebd-gestao.onrender.com"]
 
 
 # Application definition
