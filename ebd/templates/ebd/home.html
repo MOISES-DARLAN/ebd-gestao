@@ -3,88 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao Sistema EBD</title>
+    <title>Sistema EBD - Assembleia de Deus El Shaday</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap');
 
         :root {
-            --primary-color: #0d6efd;
-            --primary-hover: #0b5ed7;
-            --text-color: #212529;
-            --bg-color: #f8f9fa;
+            --primary-green: #2E8B57; /* Verde da Floresta - Principal */
+            --dark-green: #225C3D;    /* Verde Escuro - Para destaque */
+            --light-green: #D9EAD3;   /* Verde Claro - Para fundos sutis */
+            --text-dark: #2c3e50;     /* Preto azulado escuro */
+            --text-light: #ecf0f1;    /* Cinza claro */
+            --background-light: #fdfdfd; /* Fundo muito claro */
+            --border-color: #e0e0e0;  /* Cor de borda suave */
         }
 
         body, html {
             height: 100%;
             margin: 0;
             font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        .container {
+            background-color: var(--light-green); /* Usando um verde claro para o fundo */
+            color: var(--text-dark);
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden; /* Para garantir que o fundo fique limpo */
+        }
+
+        .container {
+            background-color: var(--background-light);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            padding: 3rem 4rem;
+            max-width: 500px;
             text-align: center;
-            min-height: 100vh;
-            padding: 2rem;
             box-sizing: border-box;
+            animation: fadeIn 1s ease-out;
         }
 
-        .content {
-            max-width: 600px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        h1 {
-            font-size: 3rem;
+        .logo-text {
+            font-family: 'Playfair Display', serif; /* Fonte mais séria para o nome da igreja */
+            font-size: 2.8rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            color: var(--dark-green);
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+
+        .ebd-tag {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--primary-green);
+            margin-top: -10px;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .divider {
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-green);
+            margin: 1.5rem auto 2rem auto;
+            border-radius: 5px;
         }
 
         p {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 300;
-            color: #6c757d;
+            color: #5f7c8a; /* Um cinza azulado suave */
             margin-bottom: 2.5rem;
+            line-height: 1.6;
         }
 
         .cta-button {
             display: inline-block;
-            background-color: var(--primary-color);
+            background-color: var(--primary-green);
             color: white;
             padding: 1rem 2.5rem;
             font-size: 1.1rem;
-            font-weight: 400;
+            font-weight: 500;
             text-decoration: none;
-            border-radius: 50px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px; /* Bordas um pouco menos arredondadas */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.5px;
         }
 
         .cta-button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background-color: var(--dark-green);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
 
+        /* Responsividade básica */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
+            .container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            .logo-text {
+                font-size: 2.2rem;
+            }
+            .ebd-tag {
+                font-size: 1rem;
             }
             p {
-                font-size: 1.1rem;
+                font-size: 1rem;
+            }
+            .cta-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="content">
-            <h1>Sistema de Gestão EBD</h1>
-            <p>Acesse para gerenciar sua turma e registrar a presença dos alunos de forma simples e eficiente.</p>
-            <a href="{% url 'ebd:login' %}" class="cta-button">Fazer Login</a>
-        </div>
+        <h1 class="logo-text">Assembleia de Deus El Shaday</h1>
+        <span class="ebd-tag">Sistema de Gestão EBD</span>
+        <div class="divider"></div>
+        <p>Acesse o painel para gerenciar suas turmas, registrar a presença dos alunos, ofertas e acompanhar o crescimento de sua classe na Escola Bíblica Dominical.</p>
+        <a href="{% url 'ebd:login' %}" class="cta-button">Entrar no Sistema</a>
     </div>
 </body>
 </html>
