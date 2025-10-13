@@ -11,13 +11,22 @@
             <h1>Gerenciar Alunos <span style="font-weight: 300; color: #777;">| {{ turma.nome }}</span></h1>
             <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
         </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message message-success" style="margin-bottom: 1.5rem;">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
         <a href="{% url 'ebd:aluno_create' turma.id %}" class="btn btn-primary" style="margin-bottom: 1.5rem; display: inline-block;">Adicionar Aluno</a>
         <table class="custom-table">
             <thead><tr><th>Nome Completo</th><th class="actions">Ações</th></tr></thead>
             <tbody>
                 {% for aluno in alunos %}
                 <tr>
-                    <td>{{ aluno.nome_completo }}</td>
+                    <td title="{{ aluno.nome_completo }}">
+                        <div class="truncate-text">{{ aluno.nome_completo }}</div>
+                    </td>
                     <td class="actions">
                         <a href="{% url 'ebd:aluno_update' turma.id aluno.id %}" class="btn btn-warning">Editar</a>
                         <a href="{% url 'ebd:aluno_delete' turma.id aluno.id %}" class="btn btn-danger">Excluir</a>

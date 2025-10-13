@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class Aluno(models.Model):
     nome_completo = models.CharField(max_length=255)
-    data_nascimento = models.DateField()
+    data_nascimento = models.DateField(null=True, blank=True)
     nome_responsavel = models.CharField(max_length=255, blank=True, null=True)
     telefone_contato = models.CharField(max_length=20, blank=True, null=True)
     data_cadastro = models.DateTimeField(auto_now_add=True)
@@ -23,7 +23,7 @@ class Chamada(models.Model):
     turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
     data = models.DateField()
     oferta_do_dia = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    visitantes = models.PositiveIntegerField(default=0) # Este é o total de visitantes da turma
+    visitantes = models.PositiveIntegerField(default=0)
     observacoes = models.TextField(blank=True, null=True)
     
     class Meta:
