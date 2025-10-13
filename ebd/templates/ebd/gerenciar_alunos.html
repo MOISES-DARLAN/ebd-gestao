@@ -1,15 +1,42 @@
 {% extends 'base.html' %}
 {% block title %}Gerenciar Alunos - {{ turma.nome }}{% endblock %}
+
+{% block style %}
+<style>
+    @media (max-width: 768px) {
+        .student-list-table tr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0.5rem;
+        }
+        .student-list-table td {
+            display: block;
+            border-bottom: none;
+            padding: 0;
+            text-align: left;
+        }
+        .student-list-table td::before {
+            display: none; /* Remove os rótulos "Nome Completo" e "Ações" */
+        }
+        .student-list-table .actions {
+            text-align: right;
+            flex-shrink: 0; /* Impede que os botões encolham */
+        }
+        .student-list-table .btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<header class="header">
-    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
-    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
-</header>
 <main class="container">
     <div class="card">
         <div class="page-header">
             <h1>Gerenciar Alunos <span style="font-weight: 300; color: #777;">| {{ turma.nome }}</span></h1>
-            <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
+            <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar</a>
         </div>
 
         {% if messages %}
@@ -19,15 +46,21 @@
         {% endif %}
 
         <a href="{% url 'ebd:aluno_create' turma.id %}" class="btn btn-primary" style="margin-bottom: 1.5rem; display: inline-block;">Adicionar Aluno</a>
-        <table class="custom-table">
-            <thead><tr><th>Nome Completo</th><th class="actions">Ações</th></tr></thead>
+        
+        <table class="custom-table student-list-table">
+            <thead>
+                <tr>
+                    <th>Nome Completo</th>
+                    <th class="actions">Ações</th>
+                </tr>
+            </thead>
             <tbody>
                 {% for aluno in alunos %}
                 <tr>
-                    <td title="{{ aluno.nome_completo }}">
+                    <td data-label="Nome" title="{{ aluno.nome_completo }}">
                         <div class="truncate-text">{{ aluno.nome_completo }}</div>
                     </td>
-                    <td class="actions">
+                    <td class="actions" data-label="Ações">
                         <a href="{% url 'ebd:aluno_update' turma.id aluno.id %}" class="btn btn-warning">Editar</a>
                         <a href="{% url 'ebd:aluno_delete' turma.id aluno.id %}" class="btn btn-danger">Excluir</a>
                     </td>

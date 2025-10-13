@@ -1,10 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Análise Visual - {{ turma.nome }}{% endblock %}
 {% block content %}
-<header class="header">
-    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
-    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
-</header>
+
 <main class="container">
     <div class="card">
         <div class="page-header">

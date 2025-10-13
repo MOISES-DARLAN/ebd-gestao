@@ -10,10 +10,7 @@
 </style>
 {% endblock %}
 {% block content %}
-<header class="header">
-    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
-    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0; display:inline;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
-</header>
+
 
 <main class="container">
     <div class="page-header">

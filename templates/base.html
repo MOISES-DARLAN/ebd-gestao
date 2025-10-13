@@ -9,6 +9,56 @@
     {% block style %}{% endblock %}
 </head>
 <body>
-    {% block content %}{% endblock %}
+    {% if user.is_authenticated %}
+    <header class="header">
+        <a href="{% if user.is_staff %}{% url 'core:admin_dashboard' %}{% else %}{% url 'ebd:dashboard' %}{% endif %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
+        
+        <nav class="header-nav">
+            <div class="desktop-logout">
+                <form action="{% url 'ebd:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sair</button>
+                </form>
+            </div>
+
+            <div class="mobile-menu">
+                <button id="menu-toggle" class="mobile-menu-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                </button>
+                <div id="mobile-dropdown" class="mobile-dropdown">
+                    <form action="{% url 'ebd:logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Sair</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileDropdown = document.getElementById('mobile-dropdown');
+
+            if (menuToggle && mobileDropdown) {
+                menuToggle.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    mobileDropdown.classList.toggle('active');
+                });
+
+                document.addEventListener('click', function (event) {
+                    if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target)) {
+                        mobileDropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -10,15 +10,11 @@
 </style>
 {% endblock %}
 {% block content %}
-<header class="header">
-    <a href="{% url 'core:admin_dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD - Admin</a>
-    <div style="display: flex; align-items: center; gap: 1rem;">
-        <a href="{% url 'admin:index' %}" class="btn btn-secondary">Admin Padrão</a>
-        <form action="{% url 'ebd:logout' %}" method="post"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
-    </div>
-</header>
 <main class="container">
-    <div class="page-header"><h1>Painel do Administrador</h1></div>
+    <div class="page-header">
+        <h1>Painel do Administrador</h1>
+        <a href="{% url 'admin:index' %}" class="btn btn-secondary">Admin Padrão</a>
+    </div>
 
     <h2>Visão Geral do Sistema</h2>
     <div class="stats-grid">
