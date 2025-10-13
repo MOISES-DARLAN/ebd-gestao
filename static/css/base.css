@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@700&display=swap');
 
 :root {
     --primary-green: #4A7C59;
@@ -31,7 +31,7 @@ body, html {
 
 .card {
     background-color: var(--background-light);
-    border-radius: 12px;
+    border-radius: 0; 
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
     padding: 3rem 4rem;
     max-width: 500px;
@@ -41,12 +41,14 @@ body, html {
 }
 
 .logo-text {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 2.8rem;
     font-weight: 700;
     color: var(--dark-green);
     margin-bottom: 0.5rem;
     line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .tagline {
@@ -56,4 +58,23 @@ body, html {
     margin-top: -10px;
     margin-bottom: 2rem;
     display: block;
+}
+
+
+.header {
+    background-color: var(--background-light);
+    padding: 1rem 4rem; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--primary-green);
+}
+
+.header-brand {
+    font-family: 'Montserrat', sans-serif; 
+    font-size: 1.5rem;
+    color: var(--dark-green);
+    font-weight: 700;
+    text-transform: uppercase;
 }
