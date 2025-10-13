@@ -1,136 +1,51 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@700&display=swap');
 
-:root {
-    --primary-green: #4A7C59;
-    --dark-green: #3A6347;
-    --light-green: #f0f4f0;
-    --text-dark: #2c3e50;
-    --text-light: #ecf0f1;
-    --text-muted: #5f7c8a;
-    --background-light: #ffffff;
-    --border-color: #e0e0e0;
-    --error-color: #721c24;
-    --error-bg: #f8d7da;
-    --info-color: #17a2b8;
-    --warning-color: #ffc107;
-    --warning-text: #333;
-    --danger-color: #dc3545;
+.ranking-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
 }
 
-body, html {
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--light-green);
-    color: var(--text-dark);
+.ranking-list {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: ranking-counter;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 2.5rem auto;
-    padding: 0 1.5rem;
-}
-
-.card {
-    background-color: var(--background-light);
-    border-radius: 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-    padding: 2rem;
-    box-sizing: border-box;
-}
-
-.centered-container {
-    min-height: 100vh;
+.ranking-list li {
+    counter-increment: ranking-counter;
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 2rem;
-    box-sizing: border-box;
-}
-
-h1, h2, h3, .logo-text, .header-brand {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    color: var(--dark-green);
-    text-transform: uppercase;
-}
-
-.header {
-    background-color: var(--background-light);
-    padding: 1rem 4rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px solid var(--primary-green);
-}
-
-.btn {
-    display: inline-block;
-    text-decoration: none;
-    padding: 0.7rem 1.5rem;
-    border-radius: 0;
-    font-weight: 500;
-    font-size: 0.9rem;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.2s, transform 0.2s;
-}
-.btn:hover {
-    transform: translateY(-2px);
-}
-.btn-primary { background-color: var(--primary-green); color: white; }
-.btn-primary:hover { background-color: var(--dark-green); }
-.btn-danger { background-color: var(--danger-color); color: white; }
-.btn-danger:hover { background-color: #c82333; }
-.btn-warning { background-color: var(--warning-color); color: var(--warning-text); }
-.btn-info { background-color: var(--info-color); color: white; }
-.btn-secondary { background-color: var(--text-muted); color: white; }
-
-.form-group { margin-bottom: 1.5rem; text-align: left; }
-.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-.form-group input {
-    width: 100%;
     padding: 0.8rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0;
-    box-sizing: border-box;
-    font-size: 1rem;
-}
-.form-group input:focus {
-    outline: none;
-    border-color: var(--primary-green);
-    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.2);
-}
-
-.custom-table { width: 100%; border-collapse: collapse; }
-.custom-table th, .custom-table td { text-align: left; padding: 1rem; border-bottom: 1px solid var(--border-color); }
-.custom-table th { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; }
-.custom-table td.actions { text-align: right; }
-.custom-table input[type="checkbox"] { width: 18px; height: 18px; }
-
-.message {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid transparent;
-}
-.message-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-.message-error { background-color: var(--error-bg); color: var(--error-color); border-color: #f5c6cb; }
-
-
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
     border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1rem;
 }
 
-.page-header h1 {
-    margin: 0;
-    font-size: 1.8rem;
-    text-transform: none;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
+.ranking-list li:first-child {
+    font-weight: bold;
+    color: var(--dark-green);
+}
+
+.ranking-list li::before {
+    content: counter(ranking-counter);
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-right: 1.5rem;
+    min-width: 20px;
+    text-align: right;
+}
+
+.ranking-name {
+    flex-grow: 1;
+}
+
+.ranking-score {
+    font-weight: bold;
+    color: var(--primary-green);
+}
+
+@media (max-width: 992px) {
+    .ranking-grid {
+        grid-template-columns: 1fr;
+    }
 }

@@ -27,11 +27,40 @@
         <div class="stat-card"><h2>Professores</h2><p>{{ total_professores }}</p></div>
     </div>
 
-    <h2>Resumo do Dia ({{ "now"|date:"d/m/Y" }})</h2>
+    <h2>Resumo do Dia ({{ hoje|date:"d/m/Y" }})</h2>
     <div class="stats-grid">
         <div class="stat-card"><h2>Alunos Presentes</h2><p>{{ presentes_hoje }}</p></div>
         <div class="stat-card"><h2>Oferta Total</h2><p>R$ {{ oferta_hoje|default:"0.00" }}</p></div>
         <div class="stat-card"><h2>Visitantes</h2><p>{{ visitantes_hoje }}</p></div>
+    </div>
+
+    <div class="ranking-grid">
+        <div class="card">
+            <h2 class="section-title" style="margin-top: 0;">Ranking Diário</h2>
+            <ol class="ranking-list">
+                {% for item in ranking_diario %}
+                <li>
+                    <span class="ranking-name">{{ item.turma.nome }}</span>
+                    <span class="ranking-score">{{ item.media|floatformat:2 }} pts/aluno</span>
+                </li>
+                {% empty %}
+                <li>Nenhuma atividade hoje.</li>
+                {% endfor %}
+            </ol>
+        </div>
+        <div class="card">
+            <h2 class="section-title" style="margin-top: 0;">Ranking Semestral</h2>
+            <ol class="ranking-list">
+                {% for item in ranking_semestral %}
+                <li>
+                    <span class="ranking-name">{{ item.turma.nome }}</span>
+                    <span class="ranking-score">{{ item.media|floatformat:2 }} pts/aluno</span>
+                </li>
+                {% empty %}
+                <li>Sem dados no semestre.</li>
+                {% endfor %}
+            </ol>
+        </div>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
