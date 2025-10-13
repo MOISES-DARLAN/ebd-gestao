@@ -6,28 +6,25 @@
     .turma-card { display: flex; flex-direction: column; }
     .turma-card-content { padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
     .turma-icon { flex-shrink: 0; color: var(--primary-green); }
-    .turma-info h2 { margin: 0 0 0.25rem 0; font-size: 1.5rem; text-transform: none;}
+    .turma-info h2 { margin: 0 0 0.25rem 0; font-size: 1.5rem; text-transform: none; font-family: 'Montserrat', sans-serif;}
     .turma-info p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
     .turma-card-footer { padding: 1rem 1.5rem; margin-top: auto; border-top: 1px solid #f0f0f0; text-align: right; }
 </style>
 {% endblock %}
 {% block content %}
 <header class="header">
-    <div class="header-brand">El Shaday EBD</div>
+    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
     <form action="{% url 'ebd:logout' %}" method="post"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
 </header>
 <main class="container">
-    <h1 style="text-align: center; font-weight: 300; font-family: 'Roboto'; text-transform: none;">Painel de Turmas</h1>
+    <div class="page-header">
+        <h1>Painel de Turmas</h1>
+    </div>
     <div class="turma-grid">
         {% for turma in turmas %}
             <div class="card turma-card">
                 <div class="turma-card-content">
-                    <div class="turma-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                            <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
-                        </svg>
-                    </div>
+                    <div class="turma-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg></div>
                     <div class="turma-info">
                         <h2>{{ turma.nome }}</h2>
                         <p>{{ turma.alunos.count }} aluno(s) cadastrado(s)</p>

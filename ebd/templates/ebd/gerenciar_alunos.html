@@ -2,15 +2,16 @@
 {% block title %}Gerenciar Alunos - {{ turma.nome }}{% endblock %}
 {% block content %}
 <header class="header">
-    <div class="header-brand">Gerenciar Alunos</div>
-    <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
+    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
+    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
 </header>
 <main class="container">
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2>Lista de Alunos</h2>
-            <a href="{% url 'ebd:aluno_create' turma.id %}" class="btn btn-primary">Adicionar Aluno</a>
+        <div class="page-header">
+            <h1>Gerenciar Alunos <span style="font-weight: 300; color: #777;">| {{ turma.nome }}</span></h1>
+            <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
         </div>
+        <a href="{% url 'ebd:aluno_create' turma.id %}" class="btn btn-primary" style="margin-bottom: 1.5rem; display: inline-block;">Adicionar Aluno</a>
         <table class="custom-table">
             <thead><tr><th>Nome Completo</th><th class="actions">Ações</th></tr></thead>
             <tbody>

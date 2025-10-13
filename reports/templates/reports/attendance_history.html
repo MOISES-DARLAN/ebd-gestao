@@ -10,11 +10,15 @@
 {% endblock %}
 {% block content %}
 <header class="header">
-    <div class="header-brand">Histórico da Turma</div>
-    <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
+    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
+    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
 </header>
 <main class="container">
     <div class="card">
+        <div class="page-header">
+            <h1>Histórico de Chamadas <span style="font-weight: 300; color: #777;">| {{ turma.nome }}</span></h1>
+            <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
+        </div>
         {% for chamada in historico %}
             <div class="chamada-item">
                 <div class="chamada-main">

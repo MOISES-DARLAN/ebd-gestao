@@ -2,23 +2,21 @@
 {% block title %}Chamada - {{ turma.nome }}{% endblock %}
 {% block content %}
 <header class="header">
-    <div class="header-brand">Chamada do Dia</div>
-    <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
+    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
+    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
 </header>
 <main class="container">
     <div class="card">
+        <div class="page-header">
+            <h1>Chamada do Dia <span style="font-weight: 300; color: #777;">({{ "now"|date:"d/m/Y" }})</span></h1>
+            <a href="{% url 'ebd:turma_dashboard' turma.id %}" class="btn btn-secondary">Voltar ao Painel</a>
+        </div>
         {% if messages %}{% for message in messages %}<div class="message message-success">{{ message }}</div>{% endfor %}{% endif %}
         <form method="post">
             {% csrf_token %}
             <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-                <div class="form-group" style="flex: 1;">
-                    <label for="oferta">Oferta do Dia (R$)</label>
-                    <input type="number" step="0.01" name="oferta_do_dia" id="oferta" value="{{ chamada_de_hoje.oferta_do_dia|default:0 }}">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label for="visitantes">Nº de Visitantes</label>
-                    <input type="number" name="visitantes" id="visitantes" value="{{ chamada_de_hoje.visitantes|default:0 }}">
-                </div>
+                <div class="form-group" style="flex: 1;"><label for="oferta">Oferta do Dia (R$)</label><input type="number" step="0.01" name="oferta_do_dia" id="oferta" value="{{ chamada_de_hoje.oferta_do_dia|default:0 }}"></div>
+                <div class="form-group" style="flex: 1;"><label for="visitantes">Nº de Visitantes</label><input type="number" name="visitantes" id="visitantes" value="{{ chamada_de_hoje.visitantes|default:0 }}"></div>
             </div>
             <table class="custom-table">
                 <thead><tr><th>Aluno</th><th>Presente</th><th>Bíblia</th><th>Lição</th></tr></thead>

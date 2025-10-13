@@ -5,19 +5,19 @@
     .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
     .action-card { background-color: var(--background-light); text-align: center; padding: 2rem; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--border-color); }
     .action-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-    .action-card h2 { margin-top: 0; font-size: 1.25rem; }
+    .action-card h2 { margin-top: 0; font-size: 1.25rem; text-transform: none; }
     .action-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
 </style>
 {% endblock %}
 {% block content %}
 <header class="header">
-    <div class="header-brand">Turma: {{ turma.nome }}</div>
-    <nav style="display: flex; align-items: center; gap: 1rem;">
-        <a href="{% url 'ebd:dashboard' %}" class="btn btn-secondary">Voltar</a>
-        <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
-    </nav>
+    <a href="{% url 'ebd:dashboard' %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
+    <form action="{% url 'ebd:logout' %}" method="post" style="margin:0;"><button type="submit" class="btn btn-danger">Sair</button>{% csrf_token %}</form>
 </header>
 <main class="container">
+    <div class="page-header">
+        <h1>Painel da Turma: {{ turma.nome }}</h1>
+    </div>
     <div class="action-grid">
         <div class="action-card">
             <h2>Chamada</h2>
