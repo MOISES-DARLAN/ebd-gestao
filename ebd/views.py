@@ -118,6 +118,7 @@ def chamada(request, turma_id):
         'form_geral': form_geral,
         'alunos_data': alunos_data,
         'opcoes_participacao': RegistroAlunoChamada.Participacao.choices,
+        'hoje': hoje,
     }
     return render(request, 'ebd/chamada.html', context)
 
