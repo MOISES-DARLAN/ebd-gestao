@@ -3,48 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard do Professor</title>
+    <title>Dashboard - Sistema EBD</title>
     <style>
-        body { font-family: sans-serif; background-color: #f4f7f6; margin: 0; }
-        .header { background-color: white; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; font-size: 1.5rem; color: #333; }
-        .logout-form button { background: #dc3545; color: white; padding: 0.5rem 1rem; border-radius: 4px; border: none; font-family: inherit; font-size: 1rem; cursor: pointer; }
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-        .turma-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-        .turma-card { background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .turma-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
-        .turma-card-header { background-color: #007bff; color: white; padding: 1.5rem; text-align: center; }
-        .turma-card-header h2 { margin: 0; font-size: 1.25rem; }
-        .turma-card-body { padding: 1.5rem; text-align: center; }
-        .turma-card-body p { margin: 0 0 1.5rem 0; color: #6c757d; }
-        .acessar-btn { display: inline-block; text-decoration: none; background-color: #28a745; color: white; padding: 0.7rem 1.5rem; border-radius: 50px; font-weight: bold; transition: background-color 0.2s; }
-        .acessar-btn:hover { background-color: #218838; }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            --primary-green: #2E8B57; /* Verde da Floresta - Principal */
+            --dark-green: #225C3D;    /* Verde Escuro - Para destaque */
+            --light-green: #f0f4f0;   /* Verde-cinza muito claro para o fundo */
+            --text-dark: #2c3e50;     /* Preto azulado escuro */
+            --background-light: #ffffff; /* Fundo branco puro */
+            --border-color: #e0e0e0;  /* Cor de borda suave */
+        }
+
+        body, html {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light-green);
+            color: var(--text-dark);
+        }
+
+        .header {
+            background-color: var(--background-light);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary-green);
+        }
+
+        .header-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--dark-green);
+            font-weight: 700;
+        }
+
+        .logout-form button {
+            background: #dc3545;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            border: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .logout-form button:hover {
+            background: #c82333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #555;
+            margin-bottom: 2.5rem;
+        }
+
+        .turma-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .turma-card {
+            background-color: var(--background-light);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .turma-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .turma-card-content {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .turma-icon {
+            flex-shrink: 0;
+            color: var(--primary-green);
+        }
+        
+        .turma-info h2 {
+            font-family: 'Playfair Display', serif;
+            margin: 0 0 0.25rem 0;
+            font-size: 1.5rem;
+            color: var(--dark-green);
+        }
+        .turma-info p {
+            margin: 0;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .turma-card-footer {
+            padding: 1rem 1.5rem;
+            margin-top: auto;
+            border-top: 1px solid #f0f0f0;
+            text-align: right;
+        }
+
+        .acessar-btn {
+            display: inline-block;
+            text-decoration: none;
+            background-color: var(--primary-green);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .acessar-btn:hover {
+            background-color: var(--dark-green);
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Selecione uma Turma</h1>
+    <header class="header">
+        <div class="header-brand">El Shaday EBD</div>
         <form class="logout-form" action="{% url 'ebd:logout' %}" method="post">
             {% csrf_token %}
             <button type="submit">Sair</button>
         </form>
-    </div>
-    <div class="container">
+    </header>
+    <main class="container">
+        <h1 class="page-title">Painel de Turmas</h1>
         <div class="turma-grid">
             {% for turma in turmas %}
                 <div class="turma-card">
-                    <div class="turma-card-header">
-                        <h2>{{ turma.nome }}</h2>
+                    <div class="turma-card-content">
+                        <div class="turma-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                            </svg>
+                        </div>
+                        <div class="turma-info">
+                            <h2>{{ turma.nome }}</h2>
+                            <p>{{ turma.alunos.count }} aluno(s) cadastrado(s)</p>
+                        </div>
                     </div>
-                    <div class="turma-card-body">
-                        <p>Clique abaixo para acessar a área de chamada da turma.</p>
-                        <a href="{% url 'ebd:acesso_turma' turma.id %}" class="acessar-btn">Acessar Turma</a>
+                    <div class="turma-card-footer">
+                        <a href="{% url 'ebd:acesso_turma' turma.id %}" class="acessar-btn">Acessar</a>
                     </div>
                 </div>
             {% empty %}
-                <p>Nenhuma turma cadastrada no sistema.</p>
+                <p style="text-align: center; grid-column: 1 / -1;">Nenhuma turma cadastrada no sistema.</p>
             {% endfor %}
         </div>
-    </div>
+    </main>
 </body>
 </html>
