@@ -1,49 +1,17 @@
 {% extends 'base.html' %}
-
 {% block title %}Bem-vindo ao Sistema EBD - El Shaday{% endblock %}
-
 {% block style %}
 <style>
-    .divider {
-        width: 80px;
-        height: 3px;
-        background-color: var(--primary-green);
-        margin: 1.5rem auto 2rem auto;
-        border-radius: 5px;
-    }
-    p {
-        font-size: 1.1rem;
-        font-weight: 300;
-        color: var(--text-muted);
-        margin-bottom: 2.5rem;
-        line-height: 1.6;
-    }
-    .cta-button {
-        display: inline-block;
-        background-color: var(--primary-green);
-        color: white;
-        padding: 1rem 2.5rem;
-        font-size: 1.1rem;
-        font-weight: 500;
-        text-decoration: none;
-        border-radius: 8px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-    .cta-button:hover {
-        background-color: var(--dark-green);
-        transform: translateY(-3px);
-    }
+    .divider { width: 80px; height: 3px; background-color: var(--primary-green); margin: 1.5rem auto 2rem auto; }
+    p { font-size: 1.1rem; font-weight: 300; color: var(--text-muted); line-height: 1.6; }
 </style>
 {% endblock %}
-
 {% block content %}
 <div class="centered-container">
     <div class="card">
-        <h1 class="logo-text">Assembleia de Deus El Shaday</h1>
-        <span class="tagline">Sistema de Gestão EBD</span>
-        <div class="divider"></div>
-        <p>Acesse o painel para gerenciar suas turmas, registrar a presença dos alunos, ofertas e acompanhar o crescimento de sua classe na Escola Bíblica Dominical.</p>
-        <a href="{% url 'ebd:login' %}" class="cta-button">Entrar no Sistema</a>
+        <h1 class="logo-text">El Shaday EBD</h1>
+        <p>Acesse o painel para gerenciar suas turmas e registrar a presença dos alunos.</p>
+        <a href="{% url 'ebd:login' %}" class="btn btn-primary">Entrar no Sistema</a>
     </div>
 </div>
 {% endblock %}

@@ -1,33 +1,24 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Detalhes da Chamada</title>
-    <style>
-        body { font-family: sans-serif; background-color: #f9f9f9; color: #333; }
-        .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1.5rem; }
-        .header h1 { font-size: 1.5rem; }
-        .back-link { text-decoration: none; background: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 4px; }
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background-color: #f8f9fa; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem; }
-        .summary-item { text-align: center; }
-        .summary-item h2 { font-size: 1rem; color: #6c757d; margin: 0 0 0.5rem 0; font-weight: normal; }
-        .summary-item p { font-size: 1.5rem; font-weight: bold; margin: 0; }
-        .report-table { width: 100%; border-collapse: collapse; }
-        .report-table th, .report-table td { text-align: left; padding: 0.8rem; border-bottom: 1px solid #eee; }
-        .status-presente { color: #155724; font-weight: bold; }
-        .status-ausente { color: #721c24; }
-        .check-icon { color: #28a745; font-size: 1.2rem; }
-        .cross-icon { color: #dc3545; font-size: 1.2rem; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Relatório do Dia: {{ chamada.data|date:"d/m/Y" }}</h1>
-            <a href="{% url 'reports:history' chamada.turma.id %}" class="back-link">Voltar para Histórico</a>
-        </div>
-        
+{% extends 'base.html' %}
+{% block title %}Detalhes da Chamada{% endblock %}
+{% block style %}
+<style>
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background-color: var(--light-green); padding: 1rem; margin-bottom: 1.5rem; }
+    .summary-item { text-align: center; }
+    .summary-item h2 { font-size: 1rem; color: var(--text-muted); margin: 0 0 0.5rem 0; font-weight: normal; text-transform: none; }
+    .summary-item p { font-size: 1.5rem; font-weight: bold; margin: 0; }
+    .status-presente { color: #155724; font-weight: bold; }
+    .status-ausente { color: #721c24; }
+    .check-icon { color: #28a745; font-size: 1.2rem; }
+    .cross-icon { color: #dc3545; font-size: 1.2rem; }
+</style>
+{% endblock %}
+{% block content %}
+<header class="header">
+    <div class="header-brand">Relatório do Dia: {{ chamada.data|date:"d/m/Y" }}</div>
+    <a href="{% url 'reports:history' chamada.turma.id %}" class="btn btn-secondary">Voltar para Histórico</a>
+</header>
+<main class="container">
+    <div class="card">
         <div class="summary-grid">
             <div class="summary-item">
                 <h2>Oferta do Dia</h2>
@@ -38,41 +29,15 @@
                 <p>{{ chamada.visitantes }}</p>
             </div>
         </div>
-
-        <table class="report-table">
-            <thead>
-                <tr>
-                    <th>Aluno</th>
-                    <th>Status</th>
-                    <th>Bíblia</th>
-                    <th>Lição</th>
-                </tr>
-            </thead>
+        <table class="custom-table">
+            <thead><tr><th>Aluno</th><th>Status</th><th>Bíblia</th><th>Lição</th></tr></thead>
             <tbody>
                 {% for aluno in alunos_da_turma %}
                 <tr>
                     <td>{{ aluno.nome_completo }}</td>
-                    <td>
-                        {% if aluno.id in ids_presentes %}
-                            <span class="status-presente">Presente</span>
-                        {% else %}
-                            <span class="status-ausente">Ausente</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if aluno.id in ids_com_biblia %}
-                            <span class="check-icon">&#10004;</span>
-                        {% else %}
-                            <span class="cross-icon">&#10008;</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if aluno.id in ids_com_licao %}
-                            <span class="check-icon">&#10004;</span>
-                        {% else %}
-                            <span class="cross-icon">&#10008;</span>
-                        {% endif %}
-                    </td>
+                    <td>{% if aluno.id in ids_presentes %}<span class="status-presente">Presente</span>{% else %}<span class="status-ausente">Ausente</span>{% endif %}</td>
+                    <td>{% if aluno.id in ids_com_biblia %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if aluno.id in ids_com_licao %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
                 </tr>
                 {% empty %}
                 <tr><td colspan="4">Nenhum aluno cadastrado nesta turma.</td></tr>
@@ -80,5 +45,5 @@
             </tbody>
         </table>
     </div>
-</body>
-</html>
+</main>
+{% endblock %}
