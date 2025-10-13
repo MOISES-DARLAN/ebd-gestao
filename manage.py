@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
+from django.contrib.auth import get_user_model
+
 import sys
 
 
@@ -20,3 +22,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+User = get_user_model()
+if not User.objects.filter(username="admin").exists():
+    User.objects.create_superuser("admin", "moisesdarlan440@gmail.com", "Moisesdarlan123@")
