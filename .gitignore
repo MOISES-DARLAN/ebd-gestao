@@ -1,45 +1,26 @@
-# Ambientes Virtuais
 venv/
 env/
 .venv/
 .env/
-
-# Banco de Dados
 *.sqlite3
 *.sql
-
-# Arquivos de Cache e Compilados do Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Configurações de IDEs e Editores
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
-
-# Arquivos de Sistema Operacional
 .DS_Store
 Thumbs.db
-
-# Arquivos de ambiente (para variáveis secretas)
 .env
-
-# Logs
 *.log
 logs/
-
-# Arquivos de Mídia e Estáticos coletados
 media/
 staticfiles/
-
-# Relatórios de Testes
 .coverage
 htmlcov/
-
-# Artefatos de build do Python
 build/
 dist/
 *.egg-info/
