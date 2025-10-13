@@ -2,20 +2,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Turma, Chamada, Aluno, RegistroAlunoChamada
-from .forms import AlunoForm
+from .forms import AlunoForm, ChamadaGeralForm
 from datetime import date
 from django.db.models import Sum, Case, When, IntegerField
+from decimal import Decimal, InvalidOperation
 
 def home_page(request):
     return render(request, 'ebd/home.html')
 
 @login_required
 def dashboard(request):
-    # Se o usuário for admin/staff, redireciona para o painel de admin
     if request.user.is_staff:
         return redirect('core:admin_dashboard')
     
-    # Se não, continua com o fluxo normal de professor
     turmas = Turma.objects.all().order_by('nome')
     context = {'turmas': turmas}
     return render(request, 'ebd/dashboard.html', context)
@@ -57,35 +56,39 @@ def chamada(request, turma_id):
     turma = get_object_or_404(Turma, id=turma_id)
     hoje = date.today()
     obj_chamada, _ = Chamada.objects.get_or_create(turma=turma, data=hoje)
+    
+    form_geral = ChamadaGeralForm(request.POST or None, initial={
+        'oferta_do_dia': obj_chamada.oferta_do_dia,
+        'visitantes': obj_chamada.visitantes
+    })
 
     if request.method == 'POST':
-        obj_chamada.oferta_do_dia = request.POST.get('oferta_do_dia', 0)
-        obj_chamada.visitantes = request.POST.get('visitantes', 0)
-        obj_chamada.save()
-        
-        for aluno in turma.alunos.all():
-            presente = f'presente_{aluno.id}' in request.POST
-            biblia = f'biblia_{aluno.id}' in request.POST
-            revista = f'revista_{aluno.id}' in request.POST
-            contribuiu = f'contribuiu_{aluno.id}' in request.POST
-            visitante = f'visitante_{aluno.id}' in request.POST
-            participacao = request.POST.get(f'participacao_{aluno.id}', 'NADA')
+        if form_geral.is_valid():
+            obj_chamada.oferta_do_dia = form_geral.cleaned_data.get('oferta_do_dia') or 0
+            obj_chamada.visitantes = form_geral.cleaned_data.get('visitantes') or 0
+            obj_chamada.save()
+            
+            for aluno in turma.alunos.all():
+                presente = f'presente_{aluno.id}' in request.POST
+                biblia = f'biblia_{aluno.id}' in request.POST
+                revista = f'revista_{aluno.id}' in request.POST
+                contribuiu = f'contribuiu_{aluno.id}' in request.POST
+                visitante = f'visitante_{aluno.id}' in request.POST
+                participacao = request.POST.get(f'participacao_{aluno.id}', 'NADA')
 
-            RegistroAlunoChamada.objects.update_or_create(
-                chamada=obj_chamada,
-                aluno=aluno,
-                defaults={
-                    'presente': presente,
-                    'trouxe_biblia': biblia,
-                    'trouxe_revista': revista,
-                    'contribuiu': contribuiu,
-                    'levou_visitante': visitante,
-                    'participacao': participacao,
-                }
-            )
-        
-        messages.success(request, 'Chamada salva com sucesso!')
-        return redirect('ebd:chamada', turma_id=turma.id)
+                RegistroAlunoChamada.objects.update_or_create(
+                    chamada=obj_chamada,
+                    aluno=aluno,
+                    defaults={
+                        'presente': presente, 'trouxe_biblia': biblia, 'trouxe_revista': revista,
+                        'contribuiu': contribuiu, 'levou_visitante': visitante, 'participacao': participacao,
+                    }
+                )
+            
+            messages.success(request, 'Chamada salva com sucesso!')
+            return redirect('ebd:chamada', turma_id=turma.id)
+        else:
+            messages.error(request, 'Por favor, corrija os erros nos campos de Oferta ou Visitantes.')
 
     alunos_data = []
     semestre_inicio = date(hoje.year, 1, 1) if hoje.month < 7 else date(hoje.year, 7, 1)
@@ -96,17 +99,12 @@ def chamada(request, turma_id):
         pontuacao_semestre = RegistroAlunoChamada.objects.filter(
             aluno=aluno, chamada__data__gte=semestre_inicio
         ).aggregate(
-            total_pontos=Sum(Case(When(presente=True, then=15), default=0, output_field=IntegerField())) +
-                Sum(Case(When(contribuiu=True, then=10), default=0, output_field=IntegerField())) +
-                Sum(Case(
-                    When(participacao='MUITO', then=10),
-                    When(participacao='MEDIANO', then=5),
-                    default=0,
-                    output_field=IntegerField()
-                )) +
-                Sum(Case(When(trouxe_biblia=True, then=5), default=0, output_field=IntegerField())) +
-                Sum(Case(When(trouxe_revista=True, then=5), default=0, output_field=IntegerField())) +
-                Sum(Case(When(levou_visitante=True, then=20), default=0, output_field=IntegerField()))
+            total_pontos=Sum(Case(When(presente=True, then=15), default=0)) +
+                Sum(Case(When(contribuiu=True, then=10), default=0)) +
+                Sum(Case(When(participacao='MUITO', then=10), When(participacao='MEDIANO', then=5), default=0)) +
+                Sum(Case(When(trouxe_biblia=True, then=5), default=0)) +
+                Sum(Case(When(trouxe_revista=True, then=5), default=0)) +
+                Sum(Case(When(levou_visitante=True, then=20), default=0))
         )['total_pontos'] or 0
 
         alunos_data.append({
@@ -117,11 +115,12 @@ def chamada(request, turma_id):
 
     context = {
         'turma': turma,
-        'chamada_de_hoje': obj_chamada,
+        'form_geral': form_geral,
         'alunos_data': alunos_data,
         'opcoes_participacao': RegistroAlunoChamada.Participacao.choices,
     }
     return render(request, 'ebd/chamada.html', context)
+
 
 @login_required
 def gerenciar_alunos(request, turma_id):
