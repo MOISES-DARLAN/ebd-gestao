@@ -1,4 +1,4 @@
-# Sistema de Gestão para EBD - El Shaday
+# Sistema de Gestão para EBD - El Shadday
 
 ## Sobre o Projeto
 
