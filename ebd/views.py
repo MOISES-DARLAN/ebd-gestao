@@ -6,6 +6,14 @@ from .forms import AlunoForm, ChamadaGeralForm
 from datetime import date
 from django.db.models import Sum, Case, When, IntegerField
 from decimal import Decimal, InvalidOperation
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Turma, Chamada, Aluno, RegistroAlunoChamada
+from .forms import AlunoForm, ChamadaGeralForm
+from datetime import date
+from django.db.models import Sum, Case, When, IntegerField
+from decimal import Decimal, InvalidOperation
 
 def home_page(request):
     return render(request, 'ebd/home.html')
@@ -122,6 +130,66 @@ def chamada(request, turma_id):
     }
     return render(request, 'ebd/chamada.html', context)
 
+
+@login_required
+def editar_chamada(request, turma_id, chamada_id):
+    chamada_obj = get_object_or_404(Chamada, id=chamada_id, turma__id=turma_id)
+    turma = chamada_obj.turma
+
+    # Verifica permissão (Admin ou Professor autorizado)
+    if not request.user.is_staff and turma_id not in request.session.get('turmas_autorizadas', []):
+        messages.error(request, 'Acesso negado.')
+        return redirect('ebd:acesso_turma', turma_id=turma_id)
+
+    form_geral = ChamadaGeralForm(request.POST or None, initial={
+        'oferta_do_dia': chamada_obj.oferta_do_dia,
+        'visitantes': chamada_obj.visitantes
+    })
+
+    if request.method == 'POST':
+        if form_geral.is_valid():
+            chamada_obj.oferta_do_dia = form_geral.cleaned_data.get('oferta_do_dia') or 0
+            chamada_obj.visitantes = form_geral.cleaned_data.get('visitantes') or 0
+            chamada_obj.save()
+
+            for aluno in turma.alunos.all():
+                presente = f'presente_{aluno.id}' in request.POST
+                biblia = f'biblia_{aluno.id}' in request.POST
+                revista = f'revista_{aluno.id}' in request.POST
+                contribuiu = f'contribuiu_{aluno.id}' in request.POST
+                visitante = f'visitante_{aluno.id}' in request.POST
+                participacao = request.POST.get(f'participacao_{aluno.id}', 'NADA')
+
+                RegistroAlunoChamada.objects.update_or_create(
+                    chamada=chamada_obj,
+                    aluno=aluno,
+                    defaults={
+                        'presente': presente, 'trouxe_biblia': biblia, 'trouxe_revista': revista,
+                        'contribuiu': contribuiu, 'levou_visitante': visitante, 'participacao': participacao,
+                    }
+                )
+
+            messages.success(request, f'Chamada do dia {chamada_obj.data.strftime("%d/%m/%Y")} atualizada com sucesso!')
+            # Redireciona de volta para os detalhes do relatório após salvar
+            return redirect('reports:details', chamada_id=chamada_obj.id)
+        else:
+            messages.error(request, 'Por favor, corrija os erros nos campos de Oferta ou Visitantes.')
+
+    # Prepara dados para exibir no template
+    alunos_data = []
+    for aluno in turma.alunos.all().order_by('nome_completo'):
+        registro, _ = RegistroAlunoChamada.objects.get_or_create(chamada=chamada_obj, aluno=aluno)
+        alunos_data.append({'aluno': aluno, 'registro': registro})
+
+    context = {
+        'turma': turma,
+        'chamada_editando': chamada_obj,  # Variável para saber que estamos editando
+        'form_geral': form_geral,
+        'alunos_data': alunos_data,
+        'opcoes_participacao': RegistroAlunoChamada.Participacao.choices,
+    }
+    # Reutiliza o template da chamada normal, mas com dados diferentes
+    return render(request, 'ebd/editar_chamada.html', context)
 
 @login_required
 def gerenciar_alunos(request, turma_id):

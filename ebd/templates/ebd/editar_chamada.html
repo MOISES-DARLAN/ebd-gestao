@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Editar Chamada - {{ chamada_editando.data|date:"d/m/Y" }} - {{ turma.nome }}{% endblock %}
+{% block style %}
+<style>
+.pontos { color: var(--dark-green); font-size: 0.9em; font-weight: bold; margin-left: 8px; }
+.chamada-table select { padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 0; }
+</style>
+{% endblock %}
+{% block content %}
+<main class="container">
+    <div class="card">
+        <div class="page-header">
+            <h1>Editar Chamada do Dia <span style="font-weight: 300; color: #777;">({{ chamada_editando.data|date:"d/m/Y" }})</span></h1>
+             <a href="{% url 'reports:details' chamada_editando.id %}" class="btn btn-secondary">Cancelar Edição</a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {% if message.tags %}message-{{ message.tags }}{% endif %}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="form-group" style="flex: 1;">
+                    {{ form_geral.oferta_do_dia.label_tag }}
+                    {{ form_geral.oferta_do_dia }}
+                    {% if form_geral.oferta_do_dia.errors %}<ul class="form-error">{% for error in form_geral.oferta_do_dia.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    {{ form_geral.visitantes.label_tag }}
+                    {{ form_geral.visitantes }}
+                    {% if form_geral.visitantes.errors %}<ul class="form-error">{% for error in form_geral.visitantes.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+
+            <table class="custom-table chamada-table">
+                <thead>
+                    <tr>
+                        <th>Aluno</th>
+                        <th>Presente (15)</th>
+                        <th>Bíblia (5)</th>
+                        <th>Revista (5)</th>
+                        <th>Contrib. (10)</th>
+                        <th>Visitante (20)</th>
+                        <th>Participação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in alunos_data %}
+                    <tr>
+                        <td title="{{ data.aluno.nome_completo }}">
+                           <div class="truncate-text">{{ data.aluno.nome_completo }}</div>
+                        </td>
+                        <td><input type="checkbox" name="presente_{{ data.aluno.id }}" {% if data.registro.presente %}checked{% endif %}></td>
+                        <td><input type="checkbox" name="biblia_{{ data.aluno.id }}" {% if data.registro.trouxe_biblia %}checked{% endif %}></td>
+                        <td><input type="checkbox" name="revista_{{ data.aluno.id }}" {% if data.registro.trouxe_revista %}checked{% endif %}></td>
+                        <td><input type="checkbox" name="contribuiu_{{ data.aluno.id }}" {% if data.registro.contribuiu %}checked{% endif %}></td>
+                        <td><input type="checkbox" name="visitante_{{ data.aluno.id }}" {% if data.registro.levou_visitante %}checked{% endif %}></td>
+                        <td>
+                            <select name="participacao_{{ data.aluno.id }}">
+                                {% for value, label in opcoes_participacao %}
+                                <option value="{{ value }}" {% if data.registro.participacao == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7">Nenhum aluno cadastrado nesta turma.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Salvar Alterações</button>
+        </form>
+    </div>
+</main>
+{% endblock %}

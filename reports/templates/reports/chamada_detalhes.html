@@ -16,51 +16,53 @@
     <div class="card">
         <div class="page-header">
             <h1>Relatório do Dia <span style="font-weight: 300; color: #777;">({{ chamada.data|date:"d/m/Y" }})</span></h1>
-            
-            {% if request.user.is_staff %}
-                <a href="{% url 'core:admin_dashboard' %}" class="btn btn-secondary">Voltar ao Painel Admin</a>
-            {% else %}
-                <a href="{% url 'reports:history' chamada.turma.id %}" class="btn btn-secondary">Voltar para Histórico</a>
-            {% endif %}
+
+            <div style="display: flex; gap: 0.5rem;">
+                 <a href="{% url 'ebd:editar_chamada' chamada.turma.id chamada.id %}" class="btn btn-warning">Editar Chamada</a>
+
+                {% if request.user.is_staff %}
+                    <a href="{% url 'core:admin_dashboard' %}" class="btn btn-secondary">Voltar</a>
+                {% else %}
+                    <a href="{% url 'reports:history' chamada.turma.id %}" class="btn btn-secondary">Voltar</a>
+                {% endif %}
+            </div>
         </div>
         <div class="summary-grid">
             <div class="summary-item"><h2>Oferta do Dia</h2><p>R$ {{ chamada.oferta_do_dia }}</p></div>
             <div class="summary-item"><h2>Visitantes da Turma</h2><p>{{ chamada.visitantes }}</p></div>
         </div>
-       ...
-<table class="custom-table">
-    <thead>
-        <tr>
-            <th>Aluno</th>
-            <th>Pontos do Dia</th>
-            <th>Presente</th>
-            <th>Bíblia</th>
-            <th>Revista</th>
-            <th>Contribuiu</th>
-            <th>Visitante</th>
-            <th>Participação</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for registro in registros %}
-        <tr>
-            <td data-label="Aluno" title="{{ registro.aluno.nome_completo }}">
-                <div class="truncate-text">{{ registro.aluno.nome_completo }}</div>
-            </td>
-            <td data-label="Pontos"><strong>{{ registro.pontos }}</strong></td>
-            <td data-label="Presente">{% if registro.presente %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
-            <td data-label="Bíblia">{% if registro.trouxe_biblia %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
-            <td data-label="Revista">{% if registro.trouxe_revista %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
-            <td data-label="Contribuiu">{% if registro.contribuiu %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
-            <td data-label="Visitante">{% if registro.levou_visitante %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
-            <td data-label="Participação">{{ registro.get_participacao_display }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="8">Nenhum aluno nesta chamada.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-...
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Aluno</th>
+                    <th>Pontos do Dia</th>
+                    <th>Presente</th>
+                    <th>Bíblia</th>
+                    <th>Revista</th>
+                    <th>Contribuiu</th>
+                    <th>Visitante</th>
+                    <th>Participação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in registros %}
+                <tr>
+                    <td title="{{ registro.aluno.nome_completo }}">
+                        <div class="truncate-text">{{ registro.aluno.nome_completo }}</div>
+                    </td>
+                    <td><strong>{{ registro.pontos }}</strong></td>
+                    <td>{% if registro.presente %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if registro.trouxe_biblia %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if registro.trouxe_revista %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if registro.contribuiu %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{% if registro.levou_visitante %}<span class="check-icon">&#10004;</span>{% else %}<span class="cross-icon">&#10008;</span>{% endif %}</td>
+                    <td>{{ registro.get_participacao_display }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8">Nenhum registro de aluno para esta chamada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </main>
 {% endblock %}
