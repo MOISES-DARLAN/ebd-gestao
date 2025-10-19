@@ -4,15 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sistema EBD El Shadday{% endblock %}</title>
+    <title>{% block title %}Sistema EBD El Shaday{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block style %}{% endblock %}
 </head>
 <body>
+
+    {% comment %} O cabeçalho só será renderizado se o usuário estiver autenticado {% endcomment %}
     {% if user.is_authenticated %}
     <header class="header">
-        <a href="{% if user.is_staff %}{% url 'core:admin_dashboard' %}{% else %}{% url 'ebd:dashboard' %}{% endif %}" class="header-brand" style="text-decoration: none;">El Shadday EBD</a>
-        
+        <a href="{% if user.is_staff %}{% url 'core:admin_dashboard' %}{% else %}{% url 'ebd:dashboard' %}{% endif %}" class="header-brand" style="text-decoration: none;">El Shaday EBD</a>
+
         <nav class="header-nav">
             <div class="desktop-logout">
                 <form action="{% url 'ebd:logout' %}" method="post">
@@ -53,7 +55,7 @@
                 });
 
                 document.addEventListener('click', function (event) {
-                    if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target)) {
+                    if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && !menuToggle.contains(event.target)) {
                         mobileDropdown.classList.remove('active');
                     }
                 });
